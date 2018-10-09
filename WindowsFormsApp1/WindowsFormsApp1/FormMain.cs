@@ -403,7 +403,7 @@ namespace WindowsFormsApp1
                 return;
             }
             //
-            DrawChart(this.myChart,int.Parse(tbNumber.Text),int.Parse(tbAngleOne.Text),int.Parse(tbAngleTwo.Text),int.Parse(tbOffset.Text),int.Parse(tbV.Text));
+            DrawChart(this.myChart,int.Parse(tbNumber.Text),int.Parse(tbAngleOne.Text),int.Parse(tbAngleTwo.Text),decimal.Parse(tbOffset.Text));
         }
 
         private bool ValidateParameter()
@@ -419,25 +419,25 @@ namespace WindowsFormsApp1
                 return false;
             }
             //判断角度的上限和下限
-            if (int.Parse(tbAngleOne.Text) < 0)
+            if (decimal.Parse(tbAngleOne.Text) < 0)
             {
                 MessageBox.Show("数据下限不能小于0");
                 return false;
             }
             //判断上限
-            if (int.Parse(tbAngleTwo.Text) < 0)
+            if (decimal.Parse(tbAngleTwo.Text) < 0)
             {
                 MessageBox.Show("数据上限不能小于0");
                 return false;
             }
             //线性误差
-            if (int.Parse(tbOffset.Text) < 0)
+            if (decimal.Parse(tbOffset.Text) < 0)
             {
                 MessageBox.Show("线性误差不能小于0");
                 return false;
             }
             //极限电压
-            if (int.Parse(tbV.Text) < 0 || int.Parse(tbV.Text) >200)
+            if (decimal.Parse(tbV.Text) < 0 || decimal.Parse(tbV.Text) >2)
             {
                 MessageBox.Show("极限电压不能小于0或者极限电压不能大于200");
                 return false;
@@ -479,33 +479,50 @@ namespace WindowsFormsApp1
              //点数
             InitValue((ushort) RegisterSetting.测试点数, this.tbNumber, moduleBus);
             //电阻
-            InitValue((ushort) RegisterSetting.总阻设定, this.tbResistance, moduleBus);
+            InitValue((ushort) RegisterSetting.总阻设定, this.tbResistance, moduleBus,100);
             //角度1
             InitValue((ushort) RegisterSetting.角度下限, this.tbAngleOne, moduleBus);
             //角度2
             InitValue((ushort) RegisterSetting.角度下限, this.tbAngleTwo, moduleBus);
             //旋转速度
-            InitValue((ushort) RegisterSetting.旋转速度, this.tbAngleTransfer, moduleBus);
+            InitValue((ushort) RegisterSetting.旋转速度, this.tbAngleTransfer, moduleBus,10);
             //斜率
-            InitValue((ushort) RegisterSetting.斜率, this.tbSlope, moduleBus);
+            InitValue((ushort) RegisterSetting.斜率, this.tbSlope, moduleBus,100);
             //最大允许误差
-            InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, moduleBus);
+            InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, moduleBus,100);
             //极限电压
-            InitValue((ushort)RegisterSetting.极限电压,this.tbV,moduleBus);
+            InitValue((ushort)RegisterSetting.极限电压,this.tbV,moduleBus,100);
             //测试角度差
             InitValue((ushort)RegisterSetting.零位偏差值,this.offsetAngle,moduleBus);
             //正向误差
-            InitValue((ushort)RegisterSetting.总阻最大正向允许误差, this.offsetAngle, moduleBus);
+            InitValue((ushort)RegisterSetting.总阻最大正向允许误差, this.forwardError, moduleBus,10);
             //负向误差
-            InitValue((ushort)RegisterSetting.总阻最大负向允许误差, this.offsetAngle, moduleBus);
+            InitValue((ushort)RegisterSetting.总阻最大负向允许误差, this.backwardError, moduleBus,10);
             //零阻误差
-            InitValue((ushort)RegisterSetting.零阻最大允许误差, this.offsetAngle, moduleBus);
+            InitValue((ushort)RegisterSetting.零阻最大允许误差, this.zeroError, moduleBus);
+            //测量间隔
+            InitValue((ushort)RegisterSetting.测量间隔,this.tbIntervalAngle,moduleBus,10);
         }
 
-        private void InitValue(ushort address, TextBox textBox,IModbusMaster modbus)
+        private void myChart_GetToolTipText(object sender, ToolTipEventArgs e)
+        {
+
+            HitTestResult myTestResult = myChart.HitTest(e.X, e.Y, ChartElementType.DataPoint);
+            //获取命中测试的结果         
+            if (myTestResult.ChartElementType == ChartElementType.DataPoint)
+            {
+                int i = myTestResult.PointIndex;
+                DataPoint dp = myTestResult.Series.Points[i];
+                string XValue = dp.XValue.ToString();//获取数据点的X值    
+                string YValue = dp.YValues[0].ToString();//获取数据点的Y值   
+                e.Text = "角度:" + XValue + "\r\n电压" + YValue;
+            }
+        }
+
+        private void InitValue(ushort address, TextBox textBox,IModbusMaster modbus,int zoomFlag=1)
         {
             ushort[] value = modbus.ReadHoldingRegisters(ConstPara.SlaveId, address, 1);
-            textBox.Text = value[0] + "";
+            textBox.Text = ((decimal)(value[0]/(zoomFlag*1.0f))) + "";
         }
 
         /// <summary>
@@ -593,7 +610,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox) sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort) RegisterSetting.总阻设定, (TextBox) sender));
+                    new SettingResistance(this.moduleBus, (ushort) RegisterSetting.总阻设定, (TextBox) sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -649,7 +666,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.旋转速度, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.旋转速度, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -679,7 +696,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.斜率, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.斜率, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -694,7 +711,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.极限电压, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.极限电压, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -709,7 +726,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.线性允许误差, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.线性允许误差, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -740,16 +757,17 @@ namespace WindowsFormsApp1
             return resultList;
         }
 
-        private void DrawChart(Chart chart, int number,int angleOne,int angleTwo,int offSetLine,int offSetV)
+        private void DrawChart(Chart chart, int number,int angleOne,int angleTwo,decimal offSetLine)
         {
             var vList = GetTestDataList();
 
-            var list = TestPoint.GetTestPointList(vList, -1*angleOne, 1*angleTwo,(decimal) (0.01*offSetLine),(decimal)(0.01*offSetV));
-
+            var list = TestPoint.GetTestPointList(vList, -1*angleOne, 1*angleTwo,offSetLine);
+            //查找误差最大的数据
+            TestPoint.FindMaxErrorData(list);
             //刷新数据
             RefreshData(list);
             //导出数据
-            ExcelTool.TableToExcel(TestPoint.ConvertToDataTable(list),GetFileName(),GetBitmap());
+            ExcelTool.TableToExcel(TestPoint.ConvertToDataTable(list),list,GetFileName(),GetBitmap());
         }
 
 
@@ -797,7 +815,13 @@ namespace WindowsFormsApp1
         private void dataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             var dataList = this.dataGridView.DataSource as List<TestPoint>;
-            if (e.RowIndex < this.dataGridView.Rows.Count - 1)
+            //
+            if (dataList == null)
+            {
+                return;
+            }
+            TestPoint.FindMaxErrorData(dataList);
+            if (e.RowIndex < this.dataGridView.Rows.Count )
             {
                 DataGridViewRow dgrSingle = this.dataGridView.Rows[e.RowIndex];
                 try
@@ -807,7 +831,11 @@ namespace WindowsFormsApp1
                     {
                         dgrSingle.DefaultCellStyle.ForeColor = Color.Red;
                     }
-                   
+                    //如果误差最大的话,就标记为蓝色
+                    if (testPoint.IsMaxError == true)
+                    {
+                        dgrSingle.DefaultCellStyle.ForeColor = Color.Blue;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -887,7 +915,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -903,7 +931,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender));
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -973,8 +1001,19 @@ namespace WindowsFormsApp1
             }
         }
 
-       
-
-       
+        private void tbIntervalAngle_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                FormSetting form = new FormSetting();
+                form.SetValue(((TextBox)sender).Text,
+                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.测量间隔, (TextBox)sender), 10);
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

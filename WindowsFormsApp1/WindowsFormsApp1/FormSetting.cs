@@ -18,6 +18,7 @@ namespace WindowsFormsApp1
         }
 
         private ISetting _iSetting;
+        private int _zoomFlag=1;
 
         private void nameInput_ValueChanged(object sender, EventArgs e)
         {
@@ -29,9 +30,10 @@ namespace WindowsFormsApp1
             return this.nameInput;
         }
 
-        public void SetValue(string value,ISetting iSetting)
+        public void SetValue(string value,ISetting iSetting,int zoomFlag = 1)
         {
             this.nameInput.Text = value;
+            this._zoomFlag = zoomFlag;
             this._iSetting = iSetting;
         }
 
@@ -47,7 +49,8 @@ namespace WindowsFormsApp1
             var value = this.nameInput.Text;
             if (null != _iSetting)
             {
-                _iSetting.DealData(value);
+                
+                _iSetting.DealData(value+"",_zoomFlag);
             }
             this.Dispose();
         }

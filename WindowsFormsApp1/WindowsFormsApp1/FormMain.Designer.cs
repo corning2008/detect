@@ -29,11 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.Angle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ActualV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdealV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UpperV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DownV = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelChart = new System.Windows.Forms.Panel();
             this.myChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.btnConfirm = new System.Windows.Forms.Button();
@@ -41,6 +46,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label25 = new System.Windows.Forms.Label();
+            this.tbIntervalAngle = new System.Windows.Forms.TextBox();
+            this.label26 = new System.Windows.Forms.Label();
             this.systmStatus = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.zeroError = new System.Windows.Forms.TextBox();
@@ -80,16 +88,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.检测ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.相对ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Angle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ActualV = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdealV = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.UpperV = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DownV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -98,8 +101,8 @@
             this.panelChart.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.myChart)).BeginInit();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -115,7 +118,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panelChart);
-            this.splitContainer1.Size = new System.Drawing.Size(1067, 442);
+            this.splitContainer1.Size = new System.Drawing.Size(1067, 432);
             this.splitContainer1.SplitterDistance = 434;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -132,9 +135,39 @@
             this.dataGridView.Location = new System.Drawing.Point(0, 0);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowTemplate.Height = 23;
-            this.dataGridView.Size = new System.Drawing.Size(434, 442);
+            this.dataGridView.Size = new System.Drawing.Size(434, 432);
             this.dataGridView.TabIndex = 0;
             this.dataGridView.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridView_RowPrePaint);
+            // 
+            // Angle
+            // 
+            this.Angle.DataPropertyName = "Angle";
+            this.Angle.HeaderText = "角度";
+            this.Angle.Name = "Angle";
+            // 
+            // ActualV
+            // 
+            this.ActualV.DataPropertyName = "ActualV";
+            this.ActualV.HeaderText = "采集值";
+            this.ActualV.Name = "ActualV";
+            // 
+            // IdealV
+            // 
+            this.IdealV.DataPropertyName = "IdealV";
+            this.IdealV.HeaderText = "理论值";
+            this.IdealV.Name = "IdealV";
+            // 
+            // UpperV
+            // 
+            this.UpperV.DataPropertyName = "UpperV";
+            this.UpperV.HeaderText = "上限";
+            this.UpperV.Name = "UpperV";
+            // 
+            // DownV
+            // 
+            this.DownV.DataPropertyName = "DownV";
+            this.DownV.HeaderText = "下限";
+            this.DownV.Name = "DownV";
             // 
             // panelChart
             // 
@@ -142,32 +175,33 @@
             this.panelChart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChart.Location = new System.Drawing.Point(0, 0);
             this.panelChart.Name = "panelChart";
-            this.panelChart.Size = new System.Drawing.Size(629, 442);
+            this.panelChart.Size = new System.Drawing.Size(629, 432);
             this.panelChart.TabIndex = 5;
             // 
             // myChart
             // 
-            chartArea3.AxisY.Maximum = 10D;
-            chartArea3.AxisY.Minimum = 0D;
-            chartArea3.CursorX.Interval = 0.01D;
-            chartArea3.Name = "ChartArea1";
-            this.myChart.ChartAreas.Add(chartArea3);
+            chartArea1.AxisY.Maximum = 10D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.CursorX.Interval = 0.01D;
+            chartArea1.Name = "ChartArea1";
+            this.myChart.ChartAreas.Add(chartArea1);
             this.myChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.myChart.Legends.Add(legend3);
+            legend1.Name = "Legend1";
+            this.myChart.Legends.Add(legend1);
             this.myChart.Location = new System.Drawing.Point(0, 0);
             this.myChart.Name = "myChart";
-            this.myChart.Size = new System.Drawing.Size(629, 442);
+            this.myChart.Size = new System.Drawing.Size(629, 432);
             this.myChart.TabIndex = 3;
             this.myChart.Text = "chart1";
-            title3.Name = "Title1";
-            this.myChart.Titles.Add(title3);
+            title1.Name = "Title1";
+            this.myChart.Titles.Add(title1);
+            this.myChart.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.myChart_GetToolTipText);
             // 
             // btnConfirm
             // 
             this.btnConfirm.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnConfirm.ForeColor = System.Drawing.Color.Red;
-            this.btnConfirm.Location = new System.Drawing.Point(835, 109);
+            this.btnConfirm.Location = new System.Drawing.Point(853, 121);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(75, 23);
             this.btnConfirm.TabIndex = 2;
@@ -194,6 +228,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label25);
+            this.panel1.Controls.Add(this.tbIntervalAngle);
+            this.panel1.Controls.Add(this.label26);
             this.panel1.Controls.Add(this.systmStatus);
             this.panel1.Controls.Add(this.label23);
             this.panel1.Controls.Add(this.zeroError);
@@ -240,14 +277,42 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1067, 171);
+            this.panel1.Size = new System.Drawing.Size(1067, 181);
             this.panel1.TabIndex = 3;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(153, 126);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(17, 12);
+            this.label25.TabIndex = 45;
+            this.label25.Text = "度";
+            // 
+            // tbIntervalAngle
+            // 
+            this.tbIntervalAngle.Location = new System.Drawing.Point(72, 123);
+            this.tbIntervalAngle.Name = "tbIntervalAngle";
+            this.tbIntervalAngle.ReadOnly = true;
+            this.tbIntervalAngle.Size = new System.Drawing.Size(75, 21);
+            this.tbIntervalAngle.TabIndex = 44;
+            this.tbIntervalAngle.Text = "0";
+            this.tbIntervalAngle.DoubleClick += new System.EventHandler(this.tbIntervalAngle_DoubleClick);
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(12, 126);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(53, 12);
+            this.label26.TabIndex = 43;
+            this.label26.Text = "测量间隔";
             // 
             // systmStatus
             // 
             this.systmStatus.AutoSize = true;
             this.systmStatus.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.systmStatus.Location = new System.Drawing.Point(36, 141);
+            this.systmStatus.Location = new System.Drawing.Point(860, 162);
             this.systmStatus.Name = "systmStatus";
             this.systmStatus.Size = new System.Drawing.Size(53, 12);
             this.systmStatus.TabIndex = 41;
@@ -286,9 +351,9 @@
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(551, 98);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(29, 12);
+            this.label21.Size = new System.Drawing.Size(11, 12);
             this.label21.TabIndex = 37;
-            this.label21.Text = "0.1%";
+            this.label21.Text = "%";
             // 
             // backwardError
             // 
@@ -314,9 +379,9 @@
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(320, 98);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(29, 12);
+            this.label19.Size = new System.Drawing.Size(11, 12);
             this.label19.TabIndex = 34;
-            this.label19.Text = "0.1%";
+            this.label19.Text = "%";
             // 
             // forwardError
             // 
@@ -369,7 +434,7 @@
             // 
             this.btnExport.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnExport.ForeColor = System.Drawing.Color.Red;
-            this.btnExport.Location = new System.Drawing.Point(931, 109);
+            this.btnExport.Location = new System.Drawing.Point(949, 121);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(75, 23);
             this.btnExport.TabIndex = 28;
@@ -382,9 +447,9 @@
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(740, 67);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(35, 12);
+            this.label17.Size = new System.Drawing.Size(11, 12);
             this.label17.TabIndex = 27;
-            this.label17.Text = "0.01V";
+            this.label17.Text = "V";
             // 
             // tbV
             // 
@@ -410,9 +475,9 @@
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(556, 67);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(35, 12);
+            this.label15.Size = new System.Drawing.Size(11, 12);
             this.label15.TabIndex = 24;
-            this.label15.Text = "0.01V";
+            this.label15.Text = "V";
             // 
             // lbStatus
             // 
@@ -438,18 +503,18 @@
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(152, 28);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(29, 12);
+            this.label13.Size = new System.Drawing.Size(23, 12);
             this.label13.TabIndex = 21;
-            this.label13.Text = "10Ω";
+            this.label13.Text = "KΩ";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(320, 67);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(53, 12);
+            this.label12.Size = new System.Drawing.Size(29, 12);
             this.label12.TabIndex = 18;
-            this.label12.Text = "0.01v/度";
+            this.label12.Text = "v/度";
             // 
             // label11
             // 
@@ -474,9 +539,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(739, 28);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(53, 12);
+            this.label6.Size = new System.Drawing.Size(35, 12);
             this.label6.TabIndex = 15;
-            this.label6.Text = "0.1转/分";
+            this.label6.Text = "转/分";
             // 
             // tbOffset
             // 
@@ -618,15 +683,6 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "总阻";
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.splitContainer1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 171);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1067, 442);
-            this.panel2.TabIndex = 4;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -652,35 +708,14 @@
             this.相对ToolStripMenuItem.Text = "相对";
             this.相对ToolStripMenuItem.Click += new System.EventHandler(this.相对ToolStripMenuItem_Click);
             // 
-            // Angle
+            // panel2
             // 
-            this.Angle.DataPropertyName = "Angle";
-            this.Angle.HeaderText = "角度";
-            this.Angle.Name = "Angle";
-            // 
-            // ActualV
-            // 
-            this.ActualV.DataPropertyName = "ActualV";
-            this.ActualV.HeaderText = "采集量";
-            this.ActualV.Name = "ActualV";
-            // 
-            // IdealV
-            // 
-            this.IdealV.DataPropertyName = "IdealV";
-            this.IdealV.HeaderText = "理论值";
-            this.IdealV.Name = "IdealV";
-            // 
-            // UpperV
-            // 
-            this.UpperV.DataPropertyName = "UpperV";
-            this.UpperV.HeaderText = "上限";
-            this.UpperV.Name = "UpperV";
-            // 
-            // DownV
-            // 
-            this.DownV.DataPropertyName = "DownV";
-            this.DownV.HeaderText = "下限";
-            this.DownV.Name = "DownV";
+            this.panel2.Controls.Add(this.splitContainer1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 181);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1067, 432);
+            this.panel2.TabIndex = 4;
             // 
             // Main
             // 
@@ -704,9 +739,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.myChart)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -770,6 +805,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn IdealV;
         private System.Windows.Forms.DataGridViewTextBoxColumn UpperV;
         private System.Windows.Forms.DataGridViewTextBoxColumn DownV;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox tbIntervalAngle;
+        private System.Windows.Forms.Label label26;
     }
 }
 

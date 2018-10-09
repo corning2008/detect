@@ -9,6 +9,6 @@ namespace WindowsFormsApp1
 {
     public interface ISetting
     {
-        void DealData(string value);
+        void DealData(string value,int zoomFlag=1);
     }
 }

@@ -36,6 +36,21 @@ namespace WindowsFormsApp1.model
         /// </summary>
         public decimal DownV { get; set; }
 
+
+        /// <summary>
+        /// 采集的数据是否在合法范围内
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValidateData()
+        {
+            if (ActualV >= DownV && ActualV <= UpperV)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             return string.Format("Point:{0}--IdealV:{1}---ActualV:{2}---UpperV:{3}:---DownV:{4}", Angle, IdealV, ActualV,
@@ -64,9 +79,36 @@ namespace WindowsFormsApp1.model
             return newDataList;
         }
 
+        /// <summary>
+        /// 是否误差最大
+        /// </summary>
+        public bool IsMaxError { get; set; }
+
+        /// <summary>
+        /// 查找最大的误差数据
+        /// </summary>
+        /// <param name="list"></param>
+        public static void FindMaxErrorData(List<TestPoint> list)
+        {
+            decimal interval = 0;
+            TestPoint maxErrorData = null;
+            foreach (var testPoint in list)
+            {
+                if (Math.Abs(testPoint.ActualV - testPoint.IdealV) > interval)
+                {
+                    interval = Math.Abs(testPoint.ActualV - testPoint.IdealV);
+                    maxErrorData = testPoint;
+                }
+            }
+            //如果找到了误差最大的数据,就记性标记
+            if (null != maxErrorData)
+            {
+                maxErrorData.IsMaxError = true;
+            }
+        }
 
         public static List<TestPoint> GetTestPointList(List<decimal> vList, decimal downAngle, decimal upperAngle,
-            decimal error,decimal offSetV)
+            decimal error)
         {
             if (vList.Count == 1)
             {
@@ -96,6 +138,8 @@ namespace WindowsFormsApp1.model
                 list.Add(point);
                 angleBegin += slopeAngle;
             }
+
+          
             return list;
         }
 

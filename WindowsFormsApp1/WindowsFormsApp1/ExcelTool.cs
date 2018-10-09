@@ -10,6 +10,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using WindowsFormsApp1.model;
+using NPOI.HSSF.Util;
 
 namespace WindowsFormsApp1
 {
@@ -109,7 +110,7 @@ namespace WindowsFormsApp1
         /// </summary>
         /// <param name="dt"></param>
         /// <param name="file">导出路径(包括文件名与扩展名)</param>
-        public static void TableToExcel(DataTable dt, string file,Bitmap bitmap)
+        public static void TableToExcel(DataTable dt,List<TestPoint> list, string file,Bitmap bitmap)
         {
             IWorkbook workbook;
             string fileExt = Path.GetExtension(file).ToLower();
@@ -125,13 +126,36 @@ namespace WindowsFormsApp1
                 cell.SetCellValue(dt.Columns[i].ColumnName);
             }
 
+            IFont font = workbook.CreateFont();//创建字体样式
+            font.Color = HSSFColor.Red.Index;//设置字体颜
+
+            IFont fontBlue = workbook.CreateFont();
+            fontBlue.Color = HSSFColor.Blue.Index;
+
+            ICellStyle s = workbook.CreateCellStyle();
+            s.SetFont(font);
+
+            ICellStyle sBlue = workbook.CreateCellStyle();
+            sBlue.SetFont(fontBlue);
+
             //数据  
             for (int i = 0; i < dt.Rows.Count; i++)
             {
+                //获取采集的数据
+                var testPoint = list[i];
                 IRow row1 = sheet.CreateRow(i + 1);
                 for (int j = 0; j < dt.Columns.Count; j++)
                 {
                     ICell cell = row1.CreateCell(j);
+                    if (!testPoint.IsValidateData() && !testPoint.IsMaxError)
+                    {
+                        cell.CellStyle = s;
+                    }
+                    //判断是否是误差最大的数据
+                    if (testPoint.IsMaxError)
+                    {
+                        cell.CellStyle = sBlue;
+                    }
                     cell.SetCellValue(dt.Rows[i][j].ToString());
                 }
             }
