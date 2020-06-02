@@ -215,10 +215,14 @@ namespace WindowsFormsApp1
             return list;
         }
 
+        //plc的串口
+        PLCSerialPort _plcSerialPort = null;
+
         private Boolean HasOpenPort()
         {
             try
             {
+
                 if (null == this.port)
                 {
                     this.port = GetPort();
@@ -272,11 +276,24 @@ namespace WindowsFormsApp1
             try
             {
                 //首先判断端口是否打开
-                if (false == HasOpenPort())
+                if(null != _plcSerialPort)
                 {
+                    _plcSerialPort.Close();
+                    _plcSerialPort = null;
+                }
+                //判断串口是否存在
+                if (!string.IsNullOrEmpty(cmbSerialPort.Text))
+                {
+                    MessageBox.Show("请选择串口");
                     return;
                 }
-
+                _plcSerialPort = new PLCSerialPort(cmbSerialPort.Text, null);
+                //打开串口
+                if (!_plcSerialPort.Open())
+                {
+                    throw new Exception("打开串口失败");
+                }
+               
                 //判断是否已经从设备中读取参数
                 if (false == this.hasInit)
                 {
@@ -477,31 +494,31 @@ namespace WindowsFormsApp1
         private void GetInitValue(IModbusMaster moduleBus)
         {
              //点数
-            InitValue((ushort) RegisterSetting.测试点数, this.tbNumber, moduleBus);
+            InitValue((ushort) RegisterSetting.测试点数, this.tbNumber, _plcSerialPort);
             //电阻
-            InitValue((ushort) RegisterSetting.总阻设定, this.tbResistance, moduleBus,100);
+            InitValue((ushort) RegisterSetting.总阻设定, this.tbResistance, _plcSerialPort, 100);
             //角度1
-            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleOne, moduleBus);
+            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleOne, _plcSerialPort);
             //角度2
-            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleTwo, moduleBus);
+            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleTwo, _plcSerialPort);
             //旋转速度
-            InitValue((ushort) RegisterSetting.旋转速度, this.tbAngleTransfer, moduleBus,10);
+            InitValue((ushort) RegisterSetting.旋转速度, this.tbAngleTransfer, _plcSerialPort, 10);
             //斜率
-            InitValue((ushort) RegisterSetting.斜率, this.tbSlope, moduleBus,100);
+            InitValue((ushort) RegisterSetting.斜率, this.tbSlope, _plcSerialPort, 100);
             //最大允许误差
-            InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, moduleBus,100);
+            InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, _plcSerialPort, 100);
             //极限电压
-            InitValue((ushort)RegisterSetting.极限电压,this.tbV,moduleBus,100);
+            InitValue((ushort)RegisterSetting.极限电压,this.tbV, _plcSerialPort, 100);
             //测试角度差
-            InitValue((ushort)RegisterSetting.零位偏差值,this.offsetAngle,moduleBus);
+            InitValue((ushort)RegisterSetting.零位偏差值,this.offsetAngle, _plcSerialPort);
             //正向误差
-            InitValue((ushort)RegisterSetting.总阻最大正向允许误差, this.forwardError, moduleBus,10);
+            InitValue((ushort)RegisterSetting.总阻最大正向允许误差, this.forwardError, _plcSerialPort, 10);
             //负向误差
-            InitValue((ushort)RegisterSetting.总阻最大负向允许误差, this.backwardError, moduleBus,10);
+            InitValue((ushort)RegisterSetting.总阻最大负向允许误差, this.backwardError, _plcSerialPort, 10);
             //零阻误差
-            InitValue((ushort)RegisterSetting.零阻最大允许误差, this.zeroError, moduleBus);
+            InitValue((ushort)RegisterSetting.零阻最大允许误差, this.zeroError, _plcSerialPort);
             //测量间隔
-            InitValue((ushort)RegisterSetting.测量间隔,this.tbIntervalAngle,moduleBus,10);
+            InitValue((ushort)RegisterSetting.测量间隔,this.tbIntervalAngle, _plcSerialPort, 10);
         }
 
         private void myChart_GetToolTipText(object sender, ToolTipEventArgs e)
@@ -519,9 +536,9 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void InitValue(ushort address, TextBox textBox,IModbusMaster modbus,int zoomFlag=1)
+        private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1)
         {
-            ushort[] value = modbus.ReadHoldingRegisters(ConstPara.SlaveId, address, 1);
+            byte[] value = modbus.ReadDataFromPLC(address, 1,1000);
             textBox.Text = ((decimal)(value[0]/(zoomFlag*1.0f))) + "";
         }
 

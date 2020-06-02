@@ -36,6 +36,9 @@
     <StartupObject>WindowsFormsApp1.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GodSharp.SerialPort, Version=1.2.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\GodSharp.SerialPort.1.2.0.6\lib\net45\GodSharp.SerialPort.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -91,6 +94,8 @@
     </Compile>
     <Compile Include="ISetting.cs" />
     <Compile Include="Modbus.cs" />
+    <Compile Include="PLCCommandFactory.cs" />
+    <Compile Include="PLCSerialPort.cs" />
     <Compile Include="TestPoint.cs" />
     <Compile Include="PanelPrint.cs" />
     <Compile Include="Program.cs" />
@@ -128,6 +133,8 @@
     </Compile>
     <None Include="资料\Mbslave1.mbs" />
     <None Include="资料\VSPD+6.9.zip" />
+    <None Include="资料\三菱FX-PLC 的通讯协议参考%281%29.pdf" />
+    <None Include="资料\地址及公式.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
