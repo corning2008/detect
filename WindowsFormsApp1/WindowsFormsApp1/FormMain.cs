@@ -25,7 +25,7 @@ namespace WindowsFormsApp1
         public delegate void Displaydelegate(byte[] InputBuf);
      
         public Displaydelegate disp_delegate;
-        private IModbusMaster moduleBus = null;
+       
         /// <summary>
         /// 是否已经读取配置的参数
         /// </summary>
@@ -76,7 +76,7 @@ namespace WindowsFormsApp1
         private bool isReadingStatus = false;
 
         private int currentY = 0;
-        private SerialPort port;
+      
 
         private void PrintDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
@@ -168,16 +168,12 @@ namespace WindowsFormsApp1
             try
             {
                 //释放资源
-                if (null != moduleBus)
+                if (null != _plcSerialPort)
                 {
-                    moduleBus.Dispose();
+                    _plcSerialPort.Close();
+                    _plcSerialPort = null;
                 }
-                //关闭串口
-                if (null != this.port && this.port.IsOpen)
-                {
-                    this.port.Close();
-                    this.port.Dispose();
-                }
+              
                
             }
             catch (Exception ex)
@@ -217,52 +213,6 @@ namespace WindowsFormsApp1
 
         //plc的串口
         PLCSerialPort _plcSerialPort = null;
-
-        private Boolean HasOpenPort()
-        {
-            try
-            {
-
-                if (null == this.port)
-                {
-                    this.port = GetPort();
-                    if (port.IsOpen)
-                    {
-                        MessageBox.Show("端口已经被占用");
-                        this.port = null;
-                        return false;
-                    }
-
-                    //如果没有被占用就打开端口
-                    port.Open();
-                    this.lbStatus.Text = "端口打开成功";
-                    this.cmbSerialPort.Enabled = false;
-                    return true;
-                }
-                else
-                {
-                    //如果已经绑定端口, 查看是否已经工作
-                    if (this.port.IsOpen)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //如果端口没有打开, 提示用户重新打开程序
-                        MessageBox.Show("请关闭程序后重新打开");
-                        return false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.port = null;
-                //如果出现异常,就返回false
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-
-        }
 
 
       
@@ -307,7 +257,7 @@ namespace WindowsFormsApp1
                 this.cmbSerialPort.Enabled = false;
                 this.btnConfirm.Enabled = false;
                 //在开始测试之前需要发送测试命令
-                SetValue((ushort)RegisterSetting.测试命令,1,this.moduleBus);
+                SetValue((ushort)RegisterSetting.测试命令,1,_plcSerialPort);
                 //开始读取,读取采集的状态, 如果采集到数据就把数据呈现出来
                 SetSystemStatus("等待测试");
                 Task.Factory.StartNew(()=>
@@ -322,7 +272,7 @@ namespace WindowsFormsApp1
                         //
                         while (isReadingStatus)
                         {
-                            ushort[] value = moduleBus.ReadHoldingRegisters(ConstPara.SlaveId, (ushort) RegisterSetting.测试状态, 1);
+                            byte[] value = _plcSerialPort.ReadDataFromPLCD((int)RegisterSetting.测试状态, 1,500);
                             //呈现测试的结果
                             ShowTestResult(value[0]);
                             //已经检测完毕
@@ -491,7 +441,7 @@ namespace WindowsFormsApp1
        
        
       
-        private void GetInitValue(IModbusMaster moduleBus)
+        private void GetInitValue(PLCSerialPort moduleBus)
         {
              //点数
             InitValue((ushort) RegisterSetting.测试点数, this.tbNumber, _plcSerialPort);
@@ -508,7 +458,7 @@ namespace WindowsFormsApp1
             //最大允许误差
             InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, _plcSerialPort, 100);
             //极限电压
-            InitValue((ushort)RegisterSetting.极限电压,this.tbV, _plcSerialPort, 100);
+            //InitValue((ushort)RegisterSetting.极限电压,this.tbV, _plcSerialPort, 100);
             //测试角度差
             InitValue((ushort)RegisterSetting.零位偏差值,this.offsetAngle, _plcSerialPort);
             //正向误差
@@ -538,7 +488,7 @@ namespace WindowsFormsApp1
 
         private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1)
         {
-            byte[] value = modbus.ReadDataFromPLC(address, 1,1000);
+            byte[] value = modbus.ReadDataFromPLCD(address, 1,500);
             textBox.Text = ((decimal)(value[0]/(zoomFlag*1.0f))) + "";
         }
 
@@ -548,9 +498,9 @@ namespace WindowsFormsApp1
         /// <param name="address"></param>
         /// <param name="value"></param>
         /// <param name="modbus"></param>
-        private void SetValue(ushort address, ushort value, IModbusMaster modbus)
+        private void SetValue(ushort address, ushort value, PLCSerialPort modbus)
         {
-            modbus.WriteMultipleRegisters(ConstPara.SlaveId,address,new ushort[]{value});
+          //  modbus.WriteMultipleRegisters(ConstPara.SlaveId,address,new ushort[]{value});
         }
 
         
@@ -866,11 +816,9 @@ namespace WindowsFormsApp1
         {
             try
             {
-                //打开串口进行读取数据
-                //this.btnInit.Enabled = false;
-                moduleBus = GetModbusMaster(port);
+               
                 //获取初始化的数据
-                GetInitValue(moduleBus);
+                GetInitValue(_plcSerialPort);
                 //已经从设备中读取参数
                 this.hasInit = true;
                 return true;

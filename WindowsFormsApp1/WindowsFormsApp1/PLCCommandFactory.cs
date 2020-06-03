@@ -82,7 +82,7 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
-        /// 写入指令
+        /// 写入指令(基本单位是字, 地址是低位在前,高位在后)
         /// </summary>
         /// <param name="address"></param>
         /// <param name="dataList"></param>
@@ -97,11 +97,15 @@ namespace WindowsFormsApp1
             var addressBytes = Encoding.ASCII.GetBytes((address * 2 + Convert.ToUInt32("1000", 16)).ToString("X4"));
             var lengthBytes = Encoding.ASCII.GetBytes(dataList.Length.ToString("X2"));
             var sb = new StringBuilder();
-            for (var i = 0; i < dataList.Length / 2; i++)
+            foreach (var b in dataList)
             {
-                sb.Append(dataList[2 * i + 1].ToString("X2"));
-                sb.Append(dataList[2 * i].ToString("X2"));
+                sb.Append(b.ToString("X2"));
             }
+            //for (var i = 0; i < dataList.Length / 2; i++)
+            //{
+            //    sb.Append(dataList[2 * i + 1].ToString("X2"));
+            //    sb.Append(dataList[2 * i].ToString("X2"));
+            //}
 
             var dataBytes = Encoding.ASCII.GetBytes(sb.ToString());
             return GetCommand(commandid, addressBytes, lengthBytes.Concat(dataBytes).ToArray());

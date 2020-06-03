@@ -11,14 +11,14 @@ namespace WindowsFormsApp1
 
     public class SettingResistance : ISetting
     {
-        public SettingResistance(IModbusMaster modbus, ushort address, TextBox sender)
+        public SettingResistance(PLCSerialPort modbus, ushort address, TextBox sender)
         {
             this.modbus = modbus;
             this._address = address;
             this._sender = sender;
         }
 
-        private IModbusMaster modbus;
+        private PLCSerialPort modbus;
         private ushort _address;
         private TextBox _sender;
 

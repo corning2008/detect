@@ -135,6 +135,7 @@
     <None Include="资料\VSPD+6.9.zip" />
     <None Include="资料\三菱FX-PLC 的通讯协议参考%281%29.pdf" />
     <None Include="资料\地址及公式.xlsx" />
+    <None Include="资料\好的.xls" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

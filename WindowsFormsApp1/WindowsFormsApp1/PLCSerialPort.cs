@@ -49,7 +49,7 @@ namespace WindowsFormsApp1
         /// <returns></returns>
         public byte GetD10Status()
         {
-            var bytes = ReadDataFromPLC(10, 1, 1000);
+            var bytes = ReadDataFromPLCD(10, 1, 1000);
             return bytes[0];
         }
 
@@ -116,6 +116,9 @@ namespace WindowsFormsApp1
             _port?.Close();
         }
 
+
+        
+
         /// <summary>
         /// 用于进程间同步
         /// </summary>
@@ -168,13 +171,26 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
+        /// 向D类型地址写入数据
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="dataList"></param>
+        /// <param name="timeOut"></param>
+        /// <returns></returns>
+        public bool WriteDataToD(int address, byte[] dataList, int timeOut)
+        {
+            var command = PLCCommandFactory.GetWriteCommand(address, dataList);
+            return WriteDatas(command, timeOut);
+        }
+
+        /// <summary>
         /// 读取数据的长度
         /// </summary>
         /// <param name="address"></param>
         /// <param name="length"></param>
         /// <returns></returns>
 
-        public byte[] ReadDataFromPLC(int address, int length, int timeOut)
+        public byte[] ReadDataFromPLCD(int address, int length, int timeOut)
         {
             if (!Monitor.TryEnter(_flag))
             {
