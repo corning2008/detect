@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.Angle = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,10 +45,13 @@
             this.cmbSerialPort = new System.Windows.Forms.ComboBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
+            this.lbStatus = new System.Windows.Forms.Label();
             this.tbIntervalAngle = new System.Windows.Forms.TextBox();
-            this.label26 = new System.Windows.Forms.Label();
             this.systmStatus = new System.Windows.Forms.Label();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.label26 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.zeroError = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
@@ -61,12 +64,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.offsetAngle = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.btnExport = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
             this.tbV = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.lbStatus = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -88,12 +89,12 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.其他功能ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.测试数据加载ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.数据处理相对ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.线性度曲线ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -181,21 +182,21 @@
             // 
             // myChart
             // 
-            chartArea2.AxisY.Maximum = 10D;
-            chartArea2.AxisY.Minimum = 0D;
-            chartArea2.CursorX.Interval = 0.01D;
-            chartArea2.Name = "ChartArea1";
-            this.myChart.ChartAreas.Add(chartArea2);
+            chartArea1.AxisY.Maximum = 10D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.CursorX.Interval = 0.01D;
+            chartArea1.Name = "ChartArea1";
+            this.myChart.ChartAreas.Add(chartArea1);
             this.myChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.myChart.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.myChart.Legends.Add(legend1);
             this.myChart.Location = new System.Drawing.Point(0, 0);
             this.myChart.Name = "myChart";
             this.myChart.Size = new System.Drawing.Size(629, 436);
             this.myChart.TabIndex = 3;
             this.myChart.Text = "chart1";
-            title2.Name = "Title1";
-            this.myChart.Titles.Add(title2);
+            title1.Name = "Title1";
+            this.myChart.Titles.Add(title1);
             this.myChart.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.myChart_GetToolTipText);
             // 
             // btnConfirm
@@ -273,6 +274,17 @@
             this.panel1.Size = new System.Drawing.Size(1067, 177);
             this.panel1.TabIndex = 3;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.label1.Location = new System.Drawing.Point(449, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(109, 19);
+            this.label1.TabIndex = 46;
+            this.label1.Text = "线性仪检测";
+            // 
             // label25
             // 
             this.label25.AutoSize = true;
@@ -282,6 +294,18 @@
             this.label25.Size = new System.Drawing.Size(15, 10);
             this.label25.TabIndex = 45;
             this.label25.Text = "度";
+            // 
+            // lbStatus
+            // 
+            this.lbStatus.AutoSize = true;
+            this.lbStatus.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbStatus.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.lbStatus.Location = new System.Drawing.Point(978, 50);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(31, 15);
+            this.lbStatus.TabIndex = 23;
+            this.lbStatus.Text = "停止";
             // 
             // tbIntervalAngle
             // 
@@ -293,6 +317,30 @@
             this.tbIntervalAngle.Text = "0";
             this.tbIntervalAngle.DoubleClick += new System.EventHandler(this.tbIntervalAngle_DoubleClick);
             // 
+            // systmStatus
+            // 
+            this.systmStatus.AutoSize = true;
+            this.systmStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.systmStatus.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.systmStatus.Location = new System.Drawing.Point(978, 80);
+            this.systmStatus.Name = "systmStatus";
+            this.systmStatus.Size = new System.Drawing.Size(55, 15);
+            this.systmStatus.TabIndex = 41;
+            this.systmStatus.Text = "检测状态";
+            this.systmStatus.Click += new System.EventHandler(this.systmStatus_Click);
+            // 
+            // btnExport
+            // 
+            this.btnExport.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnExport.ForeColor = System.Drawing.Color.Red;
+            this.btnExport.Location = new System.Drawing.Point(904, 76);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(68, 23);
+            this.btnExport.TabIndex = 28;
+            this.btnExport.Text = "停止检测";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
             // label26
             // 
             this.label26.AutoSize = true;
@@ -302,18 +350,6 @@
             this.label26.Size = new System.Drawing.Size(45, 10);
             this.label26.TabIndex = 43;
             this.label26.Text = "测量间隔";
-            // 
-            // systmStatus
-            // 
-            this.systmStatus.AutoSize = true;
-            this.systmStatus.Font = new System.Drawing.Font("幼圆", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.systmStatus.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.systmStatus.Location = new System.Drawing.Point(978, 80);
-            this.systmStatus.Name = "systmStatus";
-            this.systmStatus.Size = new System.Drawing.Size(53, 12);
-            this.systmStatus.TabIndex = 41;
-            this.systmStatus.Text = "检测状态";
-            this.systmStatus.Click += new System.EventHandler(this.systmStatus_Click);
             // 
             // label23
             // 
@@ -435,18 +471,6 @@
             this.label18.TabIndex = 29;
             this.label18.Text = "零位偏差值";
             // 
-            // btnExport
-            // 
-            this.btnExport.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnExport.ForeColor = System.Drawing.Color.Red;
-            this.btnExport.Location = new System.Drawing.Point(904, 76);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(68, 23);
-            this.btnExport.TabIndex = 28;
-            this.btnExport.Text = "停止检测";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-            // 
             // label17
             // 
             this.label17.AutoSize = true;
@@ -486,18 +510,6 @@
             this.label15.Size = new System.Drawing.Size(10, 10);
             this.label15.TabIndex = 24;
             this.label15.Text = "V";
-            // 
-            // lbStatus
-            // 
-            this.lbStatus.AutoSize = true;
-            this.lbStatus.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.lbStatus.Font = new System.Drawing.Font("幼圆", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lbStatus.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.lbStatus.Location = new System.Drawing.Point(978, 50);
-            this.lbStatus.Name = "lbStatus";
-            this.lbStatus.Size = new System.Drawing.Size(29, 12);
-            this.lbStatus.TabIndex = 23;
-            this.lbStatus.Text = "停止";
             // 
             // label14
             // 
@@ -716,20 +728,12 @@
             this.menuStrip1.TabIndex = 42;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.splitContainer1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 177);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1067, 436);
-            this.panel2.TabIndex = 4;
-            // 
             // 其他功能ToolStripMenuItem
             // 
             this.其他功能ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.测试数据加载ToolStripMenuItem,
-            this.数据处理相对ToolStripMenuItem});
+            this.数据处理相对ToolStripMenuItem,
+            this.线性度曲线ToolStripMenuItem});
             this.其他功能ToolStripMenuItem.Name = "其他功能ToolStripMenuItem";
             this.其他功能ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
             this.其他功能ToolStripMenuItem.Text = "其他功能";
@@ -748,16 +752,21 @@
             this.数据处理相对ToolStripMenuItem.Text = "数据处理(相对)";
             this.数据处理相对ToolStripMenuItem.Click += new System.EventHandler(this.相对ToolStripMenuItem_Click);
             // 
-            // label1
+            // panel2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label1.Location = new System.Drawing.Point(449, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 19);
-            this.label1.TabIndex = 46;
-            this.label1.Text = "线性仪检测";
+            this.panel2.Controls.Add(this.splitContainer1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 177);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1067, 436);
+            this.panel2.TabIndex = 4;
+            // 
+            // 线性度曲线ToolStripMenuItem
+            // 
+            this.线性度曲线ToolStripMenuItem.Name = "线性度曲线ToolStripMenuItem";
+            this.线性度曲线ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.线性度曲线ToolStripMenuItem.Text = "线性度曲线";
+            this.线性度曲线ToolStripMenuItem.Click += new System.EventHandler(this.线性度曲线ToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -851,6 +860,7 @@
         private System.Windows.Forms.ToolStripMenuItem 测试数据加载ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 数据处理相对ToolStripMenuItem;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem 线性度曲线ToolStripMenuItem;
     }
 }
 

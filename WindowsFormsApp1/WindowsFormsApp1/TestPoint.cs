@@ -36,6 +36,16 @@ namespace WindowsFormsApp1.model
         /// </summary>
         public decimal DownV { get; set; }
 
+        /// <summary>
+        /// 从1开始
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
+        /// 线性误差：计算的方法和公示 （）
+        /// </summary>
+        public decimal LineError { get; set; }
+
 
         /// <summary>
         /// 采集的数据是否在合法范围内
@@ -57,7 +67,7 @@ namespace WindowsFormsApp1.model
                 UpperV, DownV);
         }
 
-
+        
 
         /// <summary>
         /// 获取相对的数据
@@ -107,6 +117,31 @@ namespace WindowsFormsApp1.model
             }
         }
 
+        /// <summary>
+        /// 计算线性曲线数据
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="vMax"></param>
+        /// <param name="vMin"></param>
+        public static List<TestPoint> ComputeLineErrorValue(List<TestPoint> list, decimal vMax,decimal vMin)
+        {
+            if (list.Count < 2)
+            {
+                throw new Exception("测试点数最少为2");
+            }
+            var newDataList = new List<TestPoint>();
+            var dataIndex = 0;
+            foreach(var item in list)
+            {
+                item.Index = dataIndex++;
+                item.LineError = GetLineError(vMax, vMin, item, list.Count);
+                newDataList.Add(item);
+            }
+            return newDataList;
+        }
+
+        
+
         public static List<TestPoint> GetTestPointList(List<decimal> vList, decimal downAngle, decimal upperAngle,
             decimal error)
         {
@@ -120,27 +155,42 @@ namespace WindowsFormsApp1.model
             var slopeV = ((decimal) 10)/(upperAngle - downAngle);
             List<TestPoint> list = new List<TestPoint>();
             var angleBegin = downAngle;
-
+            var dataIndex = 0;
             foreach (decimal item in vList)
             {
                 var point = new TestPoint()
                 {
-                    Angle = Math.Round(angleBegin,2),
+                    Angle = Math.Round(angleBegin, 2),
                     //实际采集值
                     ActualV = item,
                     //理论采集值
-                    IdealV = Math.Round((angleBegin - downAngle)*slopeV,2),
+                    IdealV = Math.Round((angleBegin - downAngle) * slopeV, 2),
                     //采集上限
-                    UpperV = Math.Round((angleBegin - downAngle)*slopeV + error,2),
+                    UpperV = Math.Round((angleBegin - downAngle) * slopeV + error, 2),
                     //采集下线
-                    DownV = Math.Round((angleBegin - downAngle)*slopeV - error,2)
+                    DownV = Math.Round((angleBegin - downAngle) * slopeV - error, 2),
+                    //序号
+                    Index = dataIndex++
+
                 };
+               
                 list.Add(point);
                 angleBegin += slopeAngle;
             }
 
           
             return list;
+        }
+
+        private static decimal GetLineError(decimal vMax, decimal vMin, TestPoint point, int count)
+        {
+            var idealV = Math.Round(((vMax - vMin) / (count-1))*point.Index+vMin,2);
+            if(idealV <= 0.001m)
+            {
+                idealV = 0.001m;
+            }
+            return ((point.ActualV / idealV) - 1) * 100;
+
         }
 
         public static DataTable ConvertToDataTable(List<TestPoint> dataList)

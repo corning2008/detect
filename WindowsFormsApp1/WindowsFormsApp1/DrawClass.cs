@@ -77,7 +77,7 @@ namespace WindowsFormsApp1
                     ChartType = chartType,
                     Color = color
                 };
-     
+              
                 serial.Points.DataBindXY(listX,listY);
                 chart.Series.Add(serial);
                 chart.DataBind();
@@ -88,6 +88,27 @@ namespace WindowsFormsApp1
             }
         }
         #endregion
+
+        /// <summary>
+        /// 绘画
+        /// </summary>
+        /// <param name="chart"></param>
+        /// <param name="list"></param>
+        /// <param name="areaName"></param>
+        public static void DrawLineError(Chart chart,List<TestPoint> list, string areaName)
+        {
+            chart.ChartAreas[0].AxisY.Minimum = -50;
+            chart.ChartAreas[0].AxisY.Maximum = 50;
+            var xSerial = list.Select(item => item.Angle).ToList();
+            var ySerial = list.Select(item => item.LineError).ToList();
+            var zeroList = new List<decimal>();
+            foreach(var item in xSerial)
+            {
+                zeroList.Add(0);
+            }
+            DrawSplineEx(xSerial, ySerial, chart, areaName,Color.Red, SeriesChartType.Spline);
+            DrawSplineEx(xSerial, zeroList, chart, areaName, Color.Blue, SeriesChartType.Spline);
+        }
 
 
 

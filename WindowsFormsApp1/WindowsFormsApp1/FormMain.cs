@@ -717,6 +717,7 @@ namespace WindowsFormsApp1
         private void DrawChart(Chart chart, int number,int angleOne,int angleTwo,decimal offSetLine)
         {
             var vList = GetTestDataList();
+            //获取D99和D98
 
             var list = TestPoint.GetTestPointList(vList, -1*angleOne, 1*angleTwo,offSetLine);
             //查找误差最大的数据
@@ -968,6 +969,38 @@ namespace WindowsFormsApp1
         private void systmStatus_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void 线性度曲线ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //查询数据是否存在
+                if (this._dataSource.Count == 0)
+                {
+                    MessageBox.Show("请获取采集数据,再进行操作");
+                    return;
+                }
+                //计算曲线误差
+                var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,10,0);
+                //删除数据
+                ClearData();
+                //加载数据
+                RefreshLineErrorData(newDataList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void RefreshLineErrorData(List<TestPoint> dataList)
+        {
+            _dataSource.Clear();
+            _dataSource.AddRange(dataList);
+            dataGridView.DataSource = _dataSource;
+            //更新曲线图
+            DrawClass.DrawLineError(myChart, _dataSource, "线性曲线");
         }
     }
 }
