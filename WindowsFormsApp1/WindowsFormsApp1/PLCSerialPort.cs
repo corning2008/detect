@@ -31,12 +31,34 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
-        /// 设置命令
+        /// 读取测试的电压
         /// </summary>
-        /// <param name="address"></param>
-        /// <param name="value"></param>
+        /// <param name="length"></param>
         /// <returns></returns>
-        public bool SetBitValue(int address, int value)
+        public List<decimal> GetTestVList(int length)
+        {
+            if (length > 150)
+            {
+                throw new Exception("超出读取范围");
+            }
+
+            var list = new List<decimal>();
+            for (var i = 0; i < length; i++)
+            {
+                byte[] datas = ReadDataFromPLCD(100 + i, 1, 500);
+                var value = (decimal) (datas[0] / 100.0f);
+                list.Add(Math.Round(value,2));
+            }
+            return list;
+        }
+
+    /// <summary>
+    /// 设置命令
+    /// </summary>
+    /// <param name="address"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool SetBitValue(int address, int value)
         {
             //获取设置的命令
             var command = PLCCommandFactory.SetBitCommand(address, value != 1);

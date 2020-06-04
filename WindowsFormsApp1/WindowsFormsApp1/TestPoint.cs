@@ -110,7 +110,7 @@ namespace WindowsFormsApp1.model
         public static List<TestPoint> GetTestPointList(List<decimal> vList, decimal downAngle, decimal upperAngle,
             decimal error)
         {
-            if (vList.Count == 1)
+            if (vList.Count <2)
             {
                 throw new Exception("测试点数最少为2");
             }

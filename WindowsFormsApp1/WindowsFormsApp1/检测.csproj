@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConstPara.cs" />
+    <Compile Include="DataConverter.cs" />
     <Compile Include="DrawClass.cs" />
     <Compile Include="ExcelTool.cs" />
     <Compile Include="FormMain.cs">

@@ -577,7 +577,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox) sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort) RegisterSetting.总阻设定, (TextBox) sender),100);
+                    new SettingResistance(_plcSerialPort, (ushort) RegisterSetting.总阻设定, (TextBox) sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -603,7 +603,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.角度下限, (TextBox)sender));
+                    new SettingResistance(_plcSerialPort, (ushort)RegisterSetting.角度下限, (TextBox)sender));
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -618,7 +618,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.角度上限, (TextBox)sender));
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.角度上限, (TextBox)sender));
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -633,7 +633,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.旋转速度, (TextBox)sender),10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.旋转速度, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -648,7 +648,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.测试点数, (TextBox)sender));
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.测试点数, (TextBox)sender));
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -663,7 +663,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.斜率, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.斜率, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -678,7 +678,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.极限电压, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.极限电压, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -693,7 +693,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.线性允许误差, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.线性允许误差, (TextBox)sender),100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -710,18 +710,8 @@ namespace WindowsFormsApp1
         {
             var resultList = new List<decimal>();
             var length = int.Parse(this.tbNumber.Text);
-            var hasRead = 0;
-            ushort address = (ushort)RegisterSetting.返回结果;
-            while (hasRead < length) {
-                ushort[] list = this.moduleBus.ReadHoldingRegisters(ConstPara.SlaveId, address,length-hasRead >50?(ushort)50:(ushort)(length-hasRead) );
-                foreach (var item in list)
-                {
-                    resultList.Add(Math.Round((decimal)(item / 100.0f),2));
-                }
-                hasRead += list.Length;
-                address += (ushort)list.Length;
-            }
-            return resultList;
+            
+            return _plcSerialPort.GetTestVList(length);
         }
 
         private void DrawChart(Chart chart, int number,int angleOne,int angleTwo,decimal offSetLine)
@@ -771,7 +761,7 @@ namespace WindowsFormsApp1
             {
                 isReadingStatus = false;
                 //向设备发送停止测试的命令
-                SetValue((ushort)RegisterSetting.测试命令, 2, this.moduleBus);
+                SetValue((ushort)RegisterSetting.测试命令, 2, this._plcSerialPort);
             }
             catch (Exception ex)
             {
@@ -832,18 +822,12 @@ namespace WindowsFormsApp1
 
         private void 参数读取ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (null == this.port || !port.IsOpen)
-            {
-                MessageBox.Show("请先打开端口");
-                return;
-            }
+          
             try
             {
-                //打开串口进行读取数据
-                //this.btnInit.Enabled = false;
-                moduleBus = GetModbusMaster(port);
+               
                 //获取初始化的数据
-                GetInitValue(moduleBus);
+                GetInitValue(_plcSerialPort);
             }
             catch (Exception ex)
             {
@@ -856,7 +840,7 @@ namespace WindowsFormsApp1
         }
 
         private void SetRegisterValue(ushort address, ushort value) {
-            moduleBus.WriteMultipleRegisters(ConstPara.SlaveId, address, new ushort[] { value });
+            
         }
 
 
@@ -866,7 +850,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.零位偏差值, (TextBox)sender));
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.零位偏差值, (TextBox)sender));
                 form.ShowDialog();
             }
             catch (Exception ex) {
@@ -880,7 +864,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender),10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -896,7 +880,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender),10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender),10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -911,7 +895,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.零阻最大允许误差, (TextBox)sender));
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.零阻最大允许误差, (TextBox)sender));
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -972,7 +956,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this.moduleBus, (ushort)RegisterSetting.测量间隔, (TextBox)sender), 10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.测量间隔, (TextBox)sender), 10);
                 form.ShowDialog();
             }
             catch (Exception ex)
