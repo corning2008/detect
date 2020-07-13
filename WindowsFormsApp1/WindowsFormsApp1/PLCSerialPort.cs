@@ -1,4 +1,5 @@
-﻿using GodSharp.SerialPort;
+﻿using dsnt;
+using GodSharp.SerialPort;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -30,35 +31,15 @@ namespace WindowsFormsApp1
 
         }
 
+
+
         /// <summary>
-        /// 读取测试的电压
+        /// 设置命令
         /// </summary>
-        /// <param name="length"></param>
+        /// <param name="address"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public List<decimal> GetTestVList(int length)
-        {
-            if (length > 150)
-            {
-                throw new Exception("超出读取范围");
-            }
-
-            var list = new List<decimal>();
-            for (var i = 0; i < length; i++)
-            {
-                byte[] datas = ReadDataFromPLCD(100 + i, 1, 500);
-                var value = (decimal) (datas[0] / 100.0f);
-                list.Add(Math.Round(value,2));
-            }
-            return list;
-        }
-
-    /// <summary>
-    /// 设置命令
-    /// </summary>
-    /// <param name="address"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public bool SetBitValue(int address, int value)
+        public bool SetBitValue(int address, int value)
         {
             //获取设置的命令
             var command = PLCCommandFactory.SetBitCommand(address, value != 1);
@@ -71,8 +52,19 @@ namespace WindowsFormsApp1
         /// <returns></returns>
         public byte GetD10Status()
         {
-            var bytes = ReadDataFromPLCD(10, 1, 1000);
+            var bytes = ReadDataFromPLC(10, 1, 500);
             return bytes[0];
+        }
+
+        /// <summary>
+        /// 读取一个字节的数据，根据地址
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public byte[] GetByteStatus(int address, int length)
+        {
+            var bytes = ReadDataFromPLC(address, length, 500);
+            return bytes;
         }
 
         public GodSerialPort GetSerialPort()
@@ -81,72 +73,7 @@ namespace WindowsFormsApp1
         }
 
 
-
-        /// <summary>
-        /// 是否已经打开
-        /// </summary>
-        /// <returns></returns>
-        public bool IsOpen()
-        {
-            return _port.IsOpen;
-        }
-
-        /// <summary>
-        /// 获取串口的名称
-        /// </summary>
-        /// <returns></returns>
-        public string GetPortName()
-        {
-            return _portName;
-        }
-
-        /// <summary>
-        /// 打开串口
-        /// </summary>
-        public bool Open()
-        {
-            if (null == _port)
-            {
-                _port = new GodSerialPort(this._portName, 9600, Parity.Even, 7, StopBits.One, Handshake.None);
-                _port.UseDataReceived(true, (sp, bytes) =>
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var b in bytes)
-                    {
-                        sb.Append($"{b:X2} ");
-                    }
-                    Console.WriteLine($"recv data from plc:{sb.ToString()}");
-                    //如果接受到数据,就提交给接口处理
-                    _dataRecv = bytes;
-                    _dataRecvPort?.DealData(bytes);
-                });
-            }
-            if (_port.IsOpen)
-            {
-                return true;
-            }
-            //打开串口,并进行监听
-            return _port.Open();
-
-        }
-
-        /// <summary>
-        /// 关闭串口通讯
-        /// </summary>
-        internal void Close()
-        {
-            _port?.Close();
-        }
-
-
-        
-
-        /// <summary>
-        /// 用于进程间同步
-        /// </summary>
-        private readonly object _flag = new object();
-
-        public bool WriteDatas(byte[] command, int timeOut)
+        public bool WriteDatasEx(int address, byte[] bytes, int timeOut)
         {
             if (!Monitor.TryEnter(_flag))
             {
@@ -157,9 +84,10 @@ namespace WindowsFormsApp1
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
                 {
+                    var command = PLCCommandFactory.GetWriteCommand(address, bytes);
                     _port.Write(command);
                     Console.WriteLine($"向PLC发送数据");
-                    PLCCommandFactory.PrintBytes(command);
+                    CommandFactory.PrintBytes(command);
                 }
                 else
                 {
@@ -192,17 +120,138 @@ namespace WindowsFormsApp1
             }
         }
 
+
+
         /// <summary>
-        /// 向D类型地址写入数据
+        /// 是否已经打开
         /// </summary>
-        /// <param name="address"></param>
-        /// <param name="dataList"></param>
-        /// <param name="timeOut"></param>
         /// <returns></returns>
-        public bool WriteDataToD(int address, byte[] dataList, int timeOut)
+        public bool IsOpen()
         {
-            var command = PLCCommandFactory.GetWriteCommand(address, dataList);
-            return WriteDatas(command, timeOut);
+            if (null == _port)
+            {
+                return false;
+            }
+            return _port.IsOpen;
+        }
+
+        /// <summary>
+        /// 获取串口的名称
+        /// </summary>
+        /// <returns></returns>
+        public string GetPortName()
+        {
+            return _portName;
+        }
+
+        /// <summary>
+        /// 打开串口
+        /// </summary>
+        public bool Open()
+        {
+            if (null == _port)
+            {
+                _port = new GodSerialPort(this._portName, 19200, Parity.Even, 7, StopBits.One, Handshake.None);
+                _port.UseDataReceived(true, (sp, bytes) =>
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var b in bytes)
+                    {
+                        sb.Append($"{b:X2} ");
+                    }
+                    Console.WriteLine($"recv data from plc:{sb.ToString()}");
+                    //如果接受到数据,就提交给接口处理
+                    _dataRecv = bytes;
+                    _dataRecvPort?.DealData(bytes);
+                });
+            }
+            if (_port.IsOpen)
+            {
+                return true;
+            }
+            //打开串口,并进行监听
+            return _port.Open();
+
+        }
+
+        /// <summary>
+        /// 关闭串口通讯
+        /// </summary>
+        internal void Close()
+        {
+            _port?.Close();
+        }
+
+        /// <summary>
+        /// 用于进程间同步
+        /// </summary>
+        private readonly object _flag = new object();
+
+        public bool WriteDatas(byte[] command, int timeOut)
+        {
+            if (!Monitor.TryEnter(_flag))
+            {
+                throw new Exception("串口正在执行命令,请稍后");
+            }
+            lock (_flag)
+            {
+                _dataRecv = null;
+                if (null != _port && _port.IsOpen)
+                {
+                    _port.Write(command);
+                    Console.WriteLine($"向PLC发送数据");
+                    CommandFactory.PrintBytes(command);
+                }
+                else
+                {
+                    throw new Exception("请先打开串口");
+                }
+
+                var index = 1;
+                while (index < timeOut)
+                {
+                    Thread.Sleep(1);
+                    index++;
+                    if (null != _dataRecv && _dataRecv.Length > 0)
+                    {
+                        var newBuffer = new byte[_dataRecv.Length];
+                        Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
+                        //接受到应答数据
+                        Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
+
+                        if (newBuffer[0] == 0x06)
+                        {
+                            return true;
+                        }
+
+                        return false;
+
+                    }
+                }
+
+                throw new Exception("执行命令超时");
+            }
+        }
+
+        /// 读取测试的电压
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public List<decimal> GetTestVList(int length)
+        {
+            if (length > 150)
+            {
+                throw new Exception("超出读取范围");
+            }
+
+            var list = new List<decimal>();
+            for (var i = 0; i < length; i++)
+            {
+                byte[] datas = ReadDataFromPLC(100 + i, 2, 500);
+                var value = (decimal)(datas[0] / 100.0f);
+                list.Add(Math.Round(value, 2));
+            }
+            return list;
         }
 
         /// <summary>
@@ -212,7 +261,7 @@ namespace WindowsFormsApp1
         /// <param name="length"></param>
         /// <returns></returns>
 
-        public byte[] ReadDataFromPLCD(int address, int length, int timeOut)
+        public byte[] ReadDataFromPLC(int address, int length, int timeOut)
         {
             if (!Monitor.TryEnter(_flag))
             {
@@ -226,7 +275,7 @@ namespace WindowsFormsApp1
                     var command = PLCCommandFactory.GetReadCommand(address, length);
                     _port.Write(command);
                     Console.WriteLine($"向PLC发送数据");
-                    PLCCommandFactory.PrintBytes(command);
+                    CommandFactory.PrintBytes(command);
                 }
                 else
                 {

@@ -272,11 +272,11 @@ namespace WindowsFormsApp1
                         //
                         while (isReadingStatus)
                         {
-                            byte[] value = _plcSerialPort.ReadDataFromPLCD((int)RegisterSetting.测试状态, 1,500);
+                            byte value = _plcSerialPort.GetD10Status();
                             //呈现测试的结果
-                            ShowTestResult(value[0]);
+                            ShowTestResult(value);
                             //已经检测完毕
-                            if (value[0] == 2)
+                            if (value == 2)
                             {
                                 this.Invoke(new Action(() => { BeginWork(); }));
                                 break;
@@ -311,7 +311,7 @@ namespace WindowsFormsApp1
         }
 
 
-        private void ShowTestResult(ushort value) {
+        private void ShowTestResult(byte value) {
             if (0 == value) {
                 SetSystemStatus("等待测试");
                 return;
@@ -488,8 +488,9 @@ namespace WindowsFormsApp1
 
         private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1)
         {
-            byte[] value = modbus.ReadDataFromPLCD(address, 1,500);
-            textBox.Text = ((decimal)(value[0]/(zoomFlag*1.0f))) + "";
+            byte[] value = modbus.ReadDataFromPLC(address, 2,500);
+            Int16 dataValue = BitConverter.ToInt16(value, 0);
+            textBox.Text = ((decimal)(dataValue/(zoomFlag*1.0f))) + "";
         }
 
         /// <summary>

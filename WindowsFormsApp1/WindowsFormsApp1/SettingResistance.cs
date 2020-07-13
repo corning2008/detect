@@ -35,13 +35,13 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //电阻
-                if (modbus.WriteDataToD(this._address, new byte[] {(byte) valueSet}, 500))
+                if (modbus.WriteDatasEx(this._address, new byte[] {(byte) valueSet}, 500))
                 {
                     //如果修改成功的话,就重新读取这个数值
-                    byte[] dataList = modbus.ReadDataFromPLCD(this._address, 1,500);
+                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,500);
                     this._sender.Text = ((decimal)(dataList[0] / (zoomFlag * 1.0f))) + "";
                 }
-              
+                
             }
             catch (Exception ex)
             {

@@ -106,8 +106,8 @@ namespace WindowsFormsApp1
             {
                 zeroList.Add(0);
             }
-            DrawSplineEx(xSerial, ySerial, chart, areaName,Color.Red, SeriesChartType.Spline);
-            DrawSplineEx(xSerial, zeroList, chart, areaName, Color.Blue, SeriesChartType.Spline);
+            DrawSplineEx(xSerial, ySerial, chart, areaName+"1",Color.Red, SeriesChartType.Spline);
+            DrawSplineEx(xSerial, zeroList, chart, areaName+"2", Color.Blue, SeriesChartType.Spline);
         }
 
 

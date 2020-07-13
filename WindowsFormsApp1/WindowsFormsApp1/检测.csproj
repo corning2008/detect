@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandFactory.cs" />
     <Compile Include="ConstPara.cs" />
     <Compile Include="DataConverter.cs" />
     <Compile Include="DrawClass.cs" />
