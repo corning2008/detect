@@ -248,7 +248,8 @@ namespace WindowsFormsApp1
             for (var i = 0; i < length; i++)
             {
                 byte[] datas = ReadDataFromPLC(100 + i, 2, 500);
-                var value = (decimal)(datas[0] / 100.0f);
+                var value = (decimal)(BitConverter.ToInt16(datas,0) / 100.0f);
+                Console.WriteLine($"读取到电压：{i}---{value}");
                 list.Add(Math.Round(value, 2));
             }
             return list;

@@ -11,16 +11,25 @@ namespace WindowsFormsApp1
 
     public class SettingResistance : ISetting
     {
-        public SettingResistance(PLCSerialPort modbus, ushort address, TextBox sender)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modbus"></param>
+        /// <param name="address"></param>
+        /// <param name="sender"></param>
+        /// <param name="numberBytes">字节的个数</param>
+        public SettingResistance(PLCSerialPort modbus, ushort address, TextBox sender,int numberBytes=2)
         {
             this.modbus = modbus;
             this._address = address;
             this._sender = sender;
+            this._numberByte = numberBytes;
         }
 
         private PLCSerialPort modbus;
         private ushort _address;
         private TextBox _sender;
+        private int _numberByte;
 
         public void DealData(string value,int zoomFlag =1)
         {
@@ -35,11 +44,11 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //电阻
-                if (modbus.WriteDatasEx(this._address, new byte[] {(byte) valueSet}, 500))
+                if (modbus.WriteDatasEx(this._address, BitConverter.GetBytes(valueSet), 500))
                 {
                     //如果修改成功的话,就重新读取这个数值
-                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 1,500);
-                    this._sender.Text = ((decimal)(dataList[0] / (zoomFlag * 1.0f))) + "";
+                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,500);
+                    this._sender.Text = ((decimal)((BitConverter.ToInt16(dataList,0))/ (zoomFlag * 1.0f))) + "";
                 }
                 
             }

@@ -143,7 +143,7 @@ namespace WindowsFormsApp1.model
         
 
         public static List<TestPoint> GetTestPointList(List<decimal> vList, decimal downAngle, decimal upperAngle,
-            decimal error)
+            decimal error,decimal vMax,decimal vMin)
         {
             if (vList.Count <2)
             {
@@ -152,7 +152,7 @@ namespace WindowsFormsApp1.model
             //采集点之间的角度间隔
             var slopeAngle = (upperAngle - downAngle)/(vList.Count-1);
             //角度一直的电压差
-            var slopeV = ((decimal) 10)/(upperAngle - downAngle);
+            var slopeV = ((decimal) (vMax-vMin))/(upperAngle - downAngle);
             List<TestPoint> list = new List<TestPoint>();
             var angleBegin = downAngle;
             var dataIndex = 0;
@@ -164,11 +164,11 @@ namespace WindowsFormsApp1.model
                     //实际采集值
                     ActualV = item,
                     //理论采集值
-                    IdealV = Math.Round((angleBegin - downAngle) * slopeV, 2),
+                    IdealV = Math.Round((angleBegin - downAngle) * slopeV, 2)+vMin,
                     //采集上限
-                    UpperV = Math.Round((angleBegin - downAngle) * slopeV + error, 2),
+                    UpperV = Math.Round((angleBegin - downAngle) * slopeV + error, 2)+vMin,
                     //采集下线
-                    DownV = Math.Round((angleBegin - downAngle) * slopeV - error, 2),
+                    DownV = Math.Round((angleBegin - downAngle) * slopeV - error, 2)+vMin,
                     //序号
                     Index = dataIndex++
 

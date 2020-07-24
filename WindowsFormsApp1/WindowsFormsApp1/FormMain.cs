@@ -470,6 +470,13 @@ namespace WindowsFormsApp1
             InitValue((ushort)RegisterSetting.零阻最大允许误差, this.zeroError, _plcSerialPort);
             //测量间隔
             InitValue((ushort)RegisterSetting.测量间隔,this.tbIntervalAngle, _plcSerialPort, 10);
+            //获取电压的上下限
+            var uMax = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压上限, 2, 500), 0);
+            Console.WriteLine($"电压的上限：{uMax}--{uMax / (100m)}");
+            this._uMax = (uMax/100m);
+            var uMin = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压下限, 2, 500), 0);
+            Console.WriteLine($"电压的上限：{uMin}--{uMin / (100m)}");
+            this._uMin = (uMin / 100m);
         }
 
         private void myChart_GetToolTipText(object sender, ToolTipEventArgs e)
@@ -486,13 +493,35 @@ namespace WindowsFormsApp1
                 e.Text = "角度:" + XValue + "\r\n电压" + YValue;
             }
         }
-
-        private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="textBox"></param>
+        /// <param name="modbus"></param>
+        /// <param name="zoomFlag"></param>
+        /// <param name="numberByte">读取的字节数据</param>
+        private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1,int numberByte=2)
         {
             byte[] value = modbus.ReadDataFromPLC(address, 1,500);
             //Int16 dataValue = BitConverter.ToInt16(value, 0);
-            Int16 dataValue = (Int16)value[0];
+            //Int16 dataValue = (Int16)value[0];
+            GetReadValue(out int dataValue,numberByte,value);
             textBox.Text = ((decimal)(dataValue/(zoomFlag*1.0f))) + "";
+            Console.WriteLine($"读取的数据:{dataValue} 转化后的数据：{textBox.Text}");
+        }
+
+        private void GetReadValue(out int dataValue, int numberByte,byte[] bytes)
+        {
+           if(numberByte == 1)
+            {
+                dataValue = (int)bytes[0];
+            }
+           if(numberByte == 2)
+            {
+                dataValue = BitConverter.ToInt16(bytes, 0);
+            }
+            dataValue = 0;
         }
 
         /// <summary>
@@ -723,7 +752,7 @@ namespace WindowsFormsApp1
             var vList = GetTestDataList();
             //获取D99和D98
 
-            var list = TestPoint.GetTestPointList(vList, -1*angleOne, 1*angleTwo,offSetLine);
+            var list = TestPoint.GetTestPointList(vList, -1*angleOne, 1*angleTwo,offSetLine,_uMax,_uMin);
             //查找误差最大的数据
             TestPoint.FindMaxErrorData(list);
             //刷新数据
@@ -734,6 +763,8 @@ namespace WindowsFormsApp1
 
 
         private List<TestPoint> _dataSource = new List<TestPoint>();
+        private decimal _uMax;
+        private decimal _uMin;
 
         private void RefreshData(List<TestPoint> dataList)
         {
@@ -986,7 +1017,7 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //计算曲线误差
-                var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,10,0);
+                var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
                 //删除数据
                 ClearData();
                 //加载数据
