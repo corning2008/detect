@@ -48,16 +48,6 @@ namespace WindowsFormsApp1
             return GetCommand(new byte[] { command }, addressBytes, null);
         }
 
-        public static void PrintBytes(byte[] dataList)
-        {
-            var sb = new StringBuilder();
-            foreach (var item in dataList)
-            {
-                sb.Append($"{item:X2} ");
-            }
-            Console.WriteLine(sb.ToString());
-        }
-
         /// <summary>
         /// 对接受到的数据进行校验
         /// </summary>
@@ -72,7 +62,7 @@ namespace WindowsFormsApp1
             var dataSum = new byte[dataBytes.Length - 3];
             Array.Copy(dataBytes, 1, dataSum, 0, dataSum.Length);
             var sum = GetSum(dataSum);
-            PrintBytes(sum);
+           
             if (sum[0] == dataBytes[dataBytes.Length - 2] && sum[1] == dataBytes[dataBytes.Length - 1])
             {
                 return true;
@@ -82,30 +72,22 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
-        /// 写入指令(基本单位是字, 地址是低位在前,高位在后)
+        /// 写入指令
         /// </summary>
         /// <param name="address"></param>
         /// <param name="dataList"></param>
         /// <returns></returns>
         public static byte[] GetWriteCommand(int address, byte[] dataList)
         {
-            if (dataList.Length % 2 != 0)
-            {
-                throw new Exception("字节数据必须是2的倍数");
-            }
+
             var commandid = new byte[] { 0x31 };
             var addressBytes = Encoding.ASCII.GetBytes((address * 2 + Convert.ToUInt32("1000", 16)).ToString("X4"));
             var lengthBytes = Encoding.ASCII.GetBytes(dataList.Length.ToString("X2"));
             var sb = new StringBuilder();
-            foreach (var b in dataList)
+            for (var i = 0; i < dataList.Length; i++)
             {
-                sb.Append(b.ToString("X2"));
+                sb.Append(dataList[i].ToString("X2"));
             }
-            //for (var i = 0; i < dataList.Length / 2; i++)
-            //{
-            //    sb.Append(dataList[2 * i + 1].ToString("X2"));
-            //    sb.Append(dataList[2 * i].ToString("X2"));
-            //}
 
             var dataBytes = Encoding.ASCII.GetBytes(sb.ToString());
             return GetCommand(commandid, addressBytes, lengthBytes.Concat(dataBytes).ToArray());

@@ -38,7 +38,7 @@ namespace WindowsFormsApp1
                 if (modbus.WriteDatasEx(this._address, new byte[] {(byte) valueSet}, 500))
                 {
                     //如果修改成功的话,就重新读取这个数值
-                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,500);
+                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 1,500);
                     this._sender.Text = ((decimal)(dataList[0] / (zoomFlag * 1.0f))) + "";
                 }
                 

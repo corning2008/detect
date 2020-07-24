@@ -258,6 +258,7 @@ namespace WindowsFormsApp1
                 this.btnConfirm.Enabled = false;
                 //在开始测试之前需要发送测试命令
                 SetValue((ushort)RegisterSetting.测试命令,1,_plcSerialPort);
+                Thread.Sleep(200);
                 //开始读取,读取采集的状态, 如果采集到数据就把数据呈现出来
                 SetSystemStatus("等待测试");
                 Task.Factory.StartNew(()=>
@@ -488,8 +489,9 @@ namespace WindowsFormsApp1
 
         private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1)
         {
-            byte[] value = modbus.ReadDataFromPLC(address, 2,500);
-            Int16 dataValue = BitConverter.ToInt16(value, 0);
+            byte[] value = modbus.ReadDataFromPLC(address, 1,500);
+            //Int16 dataValue = BitConverter.ToInt16(value, 0);
+            Int16 dataValue = (Int16)value[0];
             textBox.Text = ((decimal)(dataValue/(zoomFlag*1.0f))) + "";
         }
 
@@ -499,9 +501,10 @@ namespace WindowsFormsApp1
         /// <param name="address"></param>
         /// <param name="value"></param>
         /// <param name="modbus"></param>
-        private void SetValue(ushort address, ushort value, PLCSerialPort modbus)
+        private void SetValue(ushort address, byte value, PLCSerialPort modbus)
         {
-          //  modbus.WriteMultipleRegisters(ConstPara.SlaveId,address,new ushort[]{value});
+            //  modbus.WriteMultipleRegisters(ConstPara.SlaveId,address,new ushort[]{value});
+            _plcSerialPort.WriteDatasEx(address, new byte[] { value }, 500);
         }
 
         
