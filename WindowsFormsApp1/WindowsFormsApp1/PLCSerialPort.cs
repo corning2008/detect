@@ -252,6 +252,10 @@ namespace WindowsFormsApp1
                 byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 500);
                 for(var j = 0; j < readNumber; j++)
                 {
+                    if ((i + j) >= length)
+                    {
+                        break;
+                    }
                     var value = (decimal)(BitConverter.ToInt16(datas, 2*j) / 100.0f);
                     Console.WriteLine($"读取到电压：{i}---{value}");
                     list.Add(Math.Round(value, 2));
