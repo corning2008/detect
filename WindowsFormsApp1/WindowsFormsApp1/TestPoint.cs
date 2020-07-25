@@ -79,11 +79,12 @@ namespace WindowsFormsApp1.model
             List<TestPoint> newDataList = new List<TestPoint>();
             foreach (var testPoint in dataList)
             {
-                testPoint.UpperV = Math.Abs(testPoint.UpperV - 5);
-                testPoint.ActualV = Math.Abs(testPoint.ActualV - 5);
-                testPoint.DownV = Math.Abs(testPoint.DownV - 5);
-                testPoint.IdealV = Math.Abs(testPoint.IdealV - 5);
-                newDataList.Add(testPoint);
+                var data = new TestPoint();
+                data.UpperV = Math.Abs(testPoint.UpperV - 5);
+                data.ActualV = Math.Abs(testPoint.ActualV - 5);
+                data.DownV = Math.Abs(testPoint.DownV - 5);
+                data.IdealV = Math.Abs(testPoint.IdealV - 5);
+                newDataList.Add(data);
             }
 
             return newDataList;
@@ -113,7 +114,7 @@ namespace WindowsFormsApp1.model
             //如果找到了误差最大的数据,就记性标记
             if (null != maxErrorData)
             {
-                maxErrorData.IsMaxError = true;
+                maxErrorData.IsMaxError = false;
             }
         }
 
@@ -134,7 +135,7 @@ namespace WindowsFormsApp1.model
             foreach(var item in list)
             {
                 item.Index = dataIndex++;
-                item.LineError = GetLineError(vMax, vMin, item, list.Count);
+                item.LineError = Math.Round(GetLineError(vMax, vMin, item, list.Count),2);
                 newDataList.Add(item);
             }
             return newDataList;
@@ -143,7 +144,7 @@ namespace WindowsFormsApp1.model
         
 
         public static List<TestPoint> GetTestPointList(List<decimal> vList, decimal downAngle, decimal upperAngle,
-            decimal error,decimal vMax,decimal vMin)
+            decimal error,decimal vMax,decimal vMin,decimal upError,decimal downError)
         {
             if (vList.Count <2)
             {
@@ -151,6 +152,8 @@ namespace WindowsFormsApp1.model
             }
             //采集点之间的角度间隔
             var slopeAngle = (upperAngle - downAngle)/(vList.Count-1);
+            //采集点之间的电压差
+            var slopeV1 = (vMax - vMin) / (vList.Count - 1);
             //角度一直的电压差
             var slopeV = ((decimal) (vMax-vMin))/(upperAngle - downAngle);
             List<TestPoint> list = new List<TestPoint>();
@@ -164,15 +167,14 @@ namespace WindowsFormsApp1.model
                     //实际采集值
                     ActualV = item,
                     //理论采集值
-                    IdealV = Math.Round((angleBegin - downAngle) * slopeV, 2)+vMin,
+                    IdealV =   vMin,
                     //采集上限
-                    UpperV = Math.Round((angleBegin - downAngle) * slopeV + error, 2)+vMin,
-                    //采集下线
-                    DownV = Math.Round((angleBegin - downAngle) * slopeV - error, 2)+vMin,
                     //序号
                     Index = dataIndex++
-
                 };
+                point.IdealV = Math.Round(vMin + slopeV1 * point.Index, 2);
+                point.UpperV = GetValue(vMin, slopeV1, upError / 100m, point.Index);
+                point.DownV = GetValue(vMin, slopeV1, -1*(downError / 100m), point.Index);
                
                 list.Add(point);
                 angleBegin += slopeAngle;
@@ -181,6 +183,14 @@ namespace WindowsFormsApp1.model
           
             return list;
         }
+
+
+        public static decimal GetValue( decimal min,decimal interV,decimal pValue,int index)
+        {
+            return Math.Round((1 + pValue) * (min + interV * index),2);
+        }
+
+        
 
         private static decimal GetLineError(decimal vMax, decimal vMin, TestPoint point, int count)
         {

@@ -46,7 +46,7 @@
             // 
             // nameInput
             // 
-            this.nameInput.DecimalPlaces = 1;
+            this.nameInput.DecimalPlaces = 2;
             this.nameInput.Location = new System.Drawing.Point(152, 28);
             this.nameInput.Maximum = new decimal(new int[] {
             4000,

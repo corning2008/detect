@@ -237,21 +237,36 @@ namespace WindowsFormsApp1
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        public List<decimal> GetTestVList(int length)
+        public List<decimal> GetTestVList(int length,Main main)
         {
-            if (length > 150)
+            if (length > 1000)
             {
                 throw new Exception("超出读取范围");
             }
 
             var list = new List<decimal>();
-            for (var i = 0; i < length; i++)
+            var readNumber = 5;
+            for (var i = 0; i < length; i+=5)
             {
-                byte[] datas = ReadDataFromPLC(100 + i, 2, 500);
-                var value = (decimal)(BitConverter.ToInt16(datas,0) / 100.0f);
-                Console.WriteLine($"读取到电压：{i}---{value}");
-                list.Add(Math.Round(value, 2));
+                
+                byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 500);
+                for(var j = 0; j < readNumber; j++)
+                {
+                    var value = (decimal)(BitConverter.ToInt16(datas, 2*j) / 100.0f);
+                    Console.WriteLine($"读取到电压：{i}---{value}");
+                    list.Add(Math.Round(value, 2));
+                }
+               
+                main.Invoke(new Action(() =>
+                {
+                    main.GetProgressBar().Value = (int)(((i / (length*1m)) * 100));
+                }));
+                Thread.Sleep(10);
             }
+            main.Invoke(new Action(() =>
+            {
+                main.GetProgressBar().Value=100;
+            }));
             return list;
         }
 
@@ -264,10 +279,10 @@ namespace WindowsFormsApp1
 
         public byte[] ReadDataFromPLC(int address, int length, int timeOut)
         {
-            if (!Monitor.TryEnter(_flag))
-            {
-                throw new Exception("串口正在执行命令,请稍后");
-            }
+            //if (!Monitor.TryEnter(_flag))
+            //{
+            //    throw new Exception("串口正在执行命令,请稍后");
+            //}
             lock (_flag)
             {
                 _dataRecv = null;

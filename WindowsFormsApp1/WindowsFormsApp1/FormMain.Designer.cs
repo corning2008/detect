@@ -29,13 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.Angle = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ActualV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineError = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdealV = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UpperV = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DownV = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,6 +46,12 @@
             this.cmbSerialPort = new System.Windows.Forms.ComboBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label29 = new System.Windows.Forms.Label();
+            this.tbAllAngle = new System.Windows.Forms.TextBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.downValue = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
@@ -65,7 +72,7 @@
             this.offsetAngle = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.tbV = new System.Windows.Forms.TextBox();
+            this.upValue = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -92,9 +99,11 @@
             this.其他功能ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.测试数据加载ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.数据处理相对ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.线性度曲线ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.电压值ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel2 = new System.Windows.Forms.Panel();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.线性度曲线ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -130,6 +139,7 @@
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Angle,
             this.ActualV,
+            this.LineError,
             this.IdealV,
             this.UpperV,
             this.DownV});
@@ -152,6 +162,12 @@
             this.ActualV.DataPropertyName = "ActualV";
             this.ActualV.HeaderText = "采集值";
             this.ActualV.Name = "ActualV";
+            // 
+            // LineError
+            // 
+            this.LineError.DataPropertyName = "LineError";
+            this.LineError.HeaderText = "线性度误差";
+            this.LineError.Name = "LineError";
             // 
             // IdealV
             // 
@@ -182,28 +198,28 @@
             // 
             // myChart
             // 
-            chartArea1.AxisY.Maximum = 10D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.CursorX.Interval = 0.01D;
-            chartArea1.Name = "ChartArea1";
-            this.myChart.ChartAreas.Add(chartArea1);
+            chartArea2.AxisY.Maximum = 10D;
+            chartArea2.AxisY.Minimum = 0D;
+            chartArea2.CursorX.Interval = 0.01D;
+            chartArea2.Name = "ChartArea1";
+            this.myChart.ChartAreas.Add(chartArea2);
             this.myChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.myChart.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.myChart.Legends.Add(legend2);
             this.myChart.Location = new System.Drawing.Point(0, 0);
             this.myChart.Name = "myChart";
             this.myChart.Size = new System.Drawing.Size(629, 436);
             this.myChart.TabIndex = 3;
             this.myChart.Text = "chart1";
-            title1.Name = "Title1";
-            this.myChart.Titles.Add(title1);
+            title2.Name = "Title1";
+            this.myChart.Titles.Add(title2);
             this.myChart.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.myChart_GetToolTipText);
             // 
             // btnConfirm
             // 
             this.btnConfirm.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnConfirm.ForeColor = System.Drawing.Color.Red;
-            this.btnConfirm.Location = new System.Drawing.Point(825, 76);
+            this.btnConfirm.Location = new System.Drawing.Point(899, 76);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(73, 23);
             this.btnConfirm.TabIndex = 2;
@@ -222,6 +238,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label29);
+            this.panel1.Controls.Add(this.tbAllAngle);
+            this.panel1.Controls.Add(this.label30);
+            this.panel1.Controls.Add(this.label27);
+            this.panel1.Controls.Add(this.downValue);
+            this.panel1.Controls.Add(this.label28);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.cmbSerialPort);
             this.panel1.Controls.Add(this.btnConfirm);
@@ -244,7 +266,7 @@
             this.panel1.Controls.Add(this.offsetAngle);
             this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.tbV);
+            this.panel1.Controls.Add(this.upValue);
             this.panel1.Controls.Add(this.label16);
             this.panel1.Controls.Add(this.label15);
             this.panel1.Controls.Add(this.label14);
@@ -273,6 +295,67 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1067, 177);
             this.panel1.TabIndex = 3;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label29.Location = new System.Drawing.Point(139, 47);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(15, 10);
+            this.label29.TabIndex = 52;
+            this.label29.Text = "度";
+            // 
+            // tbAllAngle
+            // 
+            this.tbAllAngle.Location = new System.Drawing.Point(73, 44);
+            this.tbAllAngle.Name = "tbAllAngle";
+            this.tbAllAngle.ReadOnly = true;
+            this.tbAllAngle.Size = new System.Drawing.Size(63, 21);
+            this.tbAllAngle.TabIndex = 51;
+            this.tbAllAngle.Text = "0";
+            this.tbAllAngle.DoubleClick += new System.EventHandler(this.tbAllAngle_DoubleClick);
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label30.Location = new System.Drawing.Point(34, 47);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(25, 10);
+            this.label30.TabIndex = 50;
+            this.label30.Text = "角度";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label27.Location = new System.Drawing.Point(652, 52);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(10, 10);
+            this.label27.TabIndex = 49;
+            this.label27.Text = "%";
+            // 
+            // downValue
+            // 
+            this.downValue.Location = new System.Drawing.Point(579, 48);
+            this.downValue.Name = "downValue";
+            this.downValue.ReadOnly = true;
+            this.downValue.Size = new System.Drawing.Size(63, 21);
+            this.downValue.TabIndex = 48;
+            this.downValue.Text = "0";
+            this.downValue.DoubleClick += new System.EventHandler(this.downValue_DoubleClick);
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label28.Location = new System.Drawing.Point(527, 52);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(35, 10);
+            this.label28.TabIndex = 47;
+            this.label28.Text = "下行程";
             // 
             // label1
             // 
@@ -289,11 +372,12 @@
             // 
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label25.Location = new System.Drawing.Point(138, 140);
+            this.label25.Location = new System.Drawing.Point(354, 144);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(15, 10);
             this.label25.TabIndex = 45;
             this.label25.Text = "度";
+            this.label25.Visible = false;
             // 
             // lbStatus
             // 
@@ -309,12 +393,13 @@
             // 
             // tbIntervalAngle
             // 
-            this.tbIntervalAngle.Location = new System.Drawing.Point(72, 137);
+            this.tbIntervalAngle.Location = new System.Drawing.Point(288, 141);
             this.tbIntervalAngle.Name = "tbIntervalAngle";
             this.tbIntervalAngle.ReadOnly = true;
             this.tbIntervalAngle.Size = new System.Drawing.Size(63, 21);
             this.tbIntervalAngle.TabIndex = 44;
             this.tbIntervalAngle.Text = "0";
+            this.tbIntervalAngle.Visible = false;
             this.tbIntervalAngle.DoubleClick += new System.EventHandler(this.tbIntervalAngle_DoubleClick);
             // 
             // systmStatus
@@ -333,11 +418,11 @@
             // 
             this.btnExport.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnExport.ForeColor = System.Drawing.Color.Red;
-            this.btnExport.Location = new System.Drawing.Point(904, 76);
+            this.btnExport.Location = new System.Drawing.Point(825, 76);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(68, 23);
             this.btnExport.TabIndex = 28;
-            this.btnExport.Text = "停止检测";
+            this.btnExport.Text = "读取参数";
             this.btnExport.UseVisualStyleBackColor = true;
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
@@ -345,47 +430,51 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label26.Location = new System.Drawing.Point(16, 140);
+            this.label26.Location = new System.Drawing.Point(232, 144);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(45, 10);
             this.label26.TabIndex = 43;
             this.label26.Text = "测量间隔";
+            this.label26.Visible = false;
             // 
             // label23
             // 
             this.label23.AutoSize = true;
             this.label23.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label23.Location = new System.Drawing.Point(652, 114);
+            this.label23.Location = new System.Drawing.Point(851, 142);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(15, 10);
             this.label23.TabIndex = 40;
             this.label23.Text = "Ω";
+            this.label23.Visible = false;
             // 
             // zeroError
             // 
-            this.zeroError.Location = new System.Drawing.Point(586, 111);
+            this.zeroError.Location = new System.Drawing.Point(785, 139);
             this.zeroError.Name = "zeroError";
             this.zeroError.ReadOnly = true;
             this.zeroError.Size = new System.Drawing.Size(63, 21);
             this.zeroError.TabIndex = 39;
             this.zeroError.Text = "0";
+            this.zeroError.Visible = false;
             this.zeroError.DoubleClick += new System.EventHandler(this.ZeroError_DoubleClick);
             // 
             // label24
             // 
             this.label24.AutoSize = true;
             this.label24.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label24.Location = new System.Drawing.Point(527, 114);
+            this.label24.Location = new System.Drawing.Point(726, 142);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(45, 10);
             this.label24.TabIndex = 38;
             this.label24.Text = "零阻误差";
+            this.label24.Visible = false;
             // 
             // label21
             // 
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label21.Location = new System.Drawing.Point(486, 115);
+            this.label21.Location = new System.Drawing.Point(486, 83);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(10, 10);
             this.label21.TabIndex = 37;
@@ -393,7 +482,7 @@
             // 
             // backwardError
             // 
-            this.backwardError.Location = new System.Drawing.Point(420, 112);
+            this.backwardError.Location = new System.Drawing.Point(420, 80);
             this.backwardError.Name = "backwardError";
             this.backwardError.ReadOnly = true;
             this.backwardError.Size = new System.Drawing.Size(63, 21);
@@ -405,7 +494,7 @@
             // 
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label22.Location = new System.Drawing.Point(358, 115);
+            this.label22.Location = new System.Drawing.Point(358, 83);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(45, 10);
             this.label22.TabIndex = 35;
@@ -415,7 +504,7 @@
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label19.Location = new System.Drawing.Point(300, 114);
+            this.label19.Location = new System.Drawing.Point(300, 82);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(10, 10);
             this.label19.TabIndex = 34;
@@ -423,7 +512,7 @@
             // 
             // forwardError
             // 
-            this.forwardError.Location = new System.Drawing.Point(234, 111);
+            this.forwardError.Location = new System.Drawing.Point(234, 79);
             this.forwardError.Name = "forwardError";
             this.forwardError.ReadOnly = true;
             this.forwardError.Size = new System.Drawing.Size(63, 21);
@@ -435,7 +524,7 @@
             // 
             this.label20.AutoSize = true;
             this.label20.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label20.Location = new System.Drawing.Point(173, 114);
+            this.label20.Location = new System.Drawing.Point(173, 82);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(45, 10);
             this.label20.TabIndex = 32;
@@ -445,71 +534,75 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(138, 110);
+            this.label2.Location = new System.Drawing.Point(521, 143);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(15, 10);
             this.label2.TabIndex = 31;
             this.label2.Text = "度";
+            this.label2.Visible = false;
             // 
             // offsetAngle
             // 
-            this.offsetAngle.Location = new System.Drawing.Point(71, 107);
+            this.offsetAngle.Location = new System.Drawing.Point(454, 140);
             this.offsetAngle.Name = "offsetAngle";
             this.offsetAngle.ReadOnly = true;
             this.offsetAngle.Size = new System.Drawing.Size(63, 21);
             this.offsetAngle.TabIndex = 30;
             this.offsetAngle.Text = "0";
+            this.offsetAngle.Visible = false;
             this.offsetAngle.DoubleClick += new System.EventHandler(this.offsetAngle_DoubleClick);
             // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label18.Location = new System.Drawing.Point(6, 110);
+            this.label18.Location = new System.Drawing.Point(389, 143);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(55, 10);
             this.label18.TabIndex = 29;
             this.label18.Text = "零位偏差值";
+            this.label18.Visible = false;
             // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label17.Location = new System.Drawing.Point(652, 82);
+            this.label17.Location = new System.Drawing.Point(485, 49);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(10, 10);
             this.label17.TabIndex = 27;
-            this.label17.Text = "V";
+            this.label17.Text = "%";
             // 
-            // tbV
+            // upValue
             // 
-            this.tbV.Location = new System.Drawing.Point(586, 79);
-            this.tbV.Name = "tbV";
-            this.tbV.ReadOnly = true;
-            this.tbV.Size = new System.Drawing.Size(63, 21);
-            this.tbV.TabIndex = 26;
-            this.tbV.Text = "0";
-            this.tbV.DoubleClick += new System.EventHandler(this.tbV_DoubleClick);
+            this.upValue.Location = new System.Drawing.Point(419, 46);
+            this.upValue.Name = "upValue";
+            this.upValue.ReadOnly = true;
+            this.upValue.Size = new System.Drawing.Size(63, 21);
+            this.upValue.TabIndex = 26;
+            this.upValue.Text = "0";
+            this.upValue.DoubleClick += new System.EventHandler(this.tbV_DoubleClick);
             // 
             // label16
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label16.Location = new System.Drawing.Point(527, 82);
+            this.label16.Location = new System.Drawing.Point(360, 49);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(45, 10);
+            this.label16.Size = new System.Drawing.Size(35, 10);
             this.label16.TabIndex = 25;
-            this.label16.Text = "极限电压";
+            this.label16.Text = "上行程";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label15.Location = new System.Drawing.Point(486, 83);
+            this.label15.Location = new System.Drawing.Point(707, 142);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(10, 10);
             this.label15.TabIndex = 24;
             this.label15.Text = "V";
+            this.label15.Visible = false;
             // 
             // label14
             // 
@@ -525,47 +618,51 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label13.Location = new System.Drawing.Point(138, 50);
+            this.label13.Location = new System.Drawing.Point(966, 141);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(20, 10);
             this.label13.TabIndex = 21;
             this.label13.Text = "KΩ";
+            this.label13.Visible = false;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label12.Location = new System.Drawing.Point(300, 83);
+            this.label12.Location = new System.Drawing.Point(178, 144);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(25, 10);
             this.label12.TabIndex = 18;
             this.label12.Text = "v/度";
+            this.label12.Visible = false;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label11.Location = new System.Drawing.Point(300, 50);
+            this.label11.Location = new System.Drawing.Point(627, 108);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(15, 10);
             this.label11.TabIndex = 17;
             this.label11.Text = "度";
+            this.label11.Visible = false;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label10.Location = new System.Drawing.Point(486, 51);
+            this.label10.Location = new System.Drawing.Point(789, 109);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(15, 10);
             this.label10.TabIndex = 16;
             this.label10.Text = "度";
+            this.label10.Visible = false;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label6.Location = new System.Drawing.Point(652, 50);
+            this.label6.Location = new System.Drawing.Point(303, 48);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(30, 10);
             this.label6.TabIndex = 15;
@@ -573,22 +670,24 @@
             // 
             // tbOffset
             // 
-            this.tbOffset.Location = new System.Drawing.Point(420, 80);
+            this.tbOffset.Location = new System.Drawing.Point(641, 139);
             this.tbOffset.Name = "tbOffset";
             this.tbOffset.ReadOnly = true;
             this.tbOffset.Size = new System.Drawing.Size(63, 21);
             this.tbOffset.TabIndex = 14;
             this.tbOffset.Text = "0";
+            this.tbOffset.Visible = false;
             this.tbOffset.DoubleClick += new System.EventHandler(this.tbOffset_DoubleClick);
             // 
             // tbSlope
             // 
-            this.tbSlope.Location = new System.Drawing.Point(234, 79);
+            this.tbSlope.Location = new System.Drawing.Point(112, 140);
             this.tbSlope.Name = "tbSlope";
             this.tbSlope.ReadOnly = true;
             this.tbSlope.Size = new System.Drawing.Size(63, 21);
             this.tbSlope.TabIndex = 13;
             this.tbSlope.Text = "0";
+            this.tbSlope.Visible = false;
             this.tbSlope.DoubleClick += new System.EventHandler(this.tbSlope_DoubleClick);
             this.tbSlope.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSlope_KeyPress);
             // 
@@ -605,45 +704,47 @@
             // 
             // tbAngleTransfer
             // 
-            this.tbAngleTransfer.Location = new System.Drawing.Point(586, 47);
+            this.tbAngleTransfer.Location = new System.Drawing.Point(237, 45);
             this.tbAngleTransfer.Name = "tbAngleTransfer";
             this.tbAngleTransfer.ReadOnly = true;
             this.tbAngleTransfer.Size = new System.Drawing.Size(63, 21);
             this.tbAngleTransfer.TabIndex = 11;
             this.tbAngleTransfer.Text = "0";
             this.tbAngleTransfer.DoubleClick += new System.EventHandler(this.tbAngleTransfer_DoubleClick);
-            this.tbAngleTransfer.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbAngleTransfer_KeyPress);
             // 
             // tbAngleTwo
             // 
-            this.tbAngleTwo.Location = new System.Drawing.Point(420, 48);
+            this.tbAngleTwo.Location = new System.Drawing.Point(723, 106);
             this.tbAngleTwo.Name = "tbAngleTwo";
             this.tbAngleTwo.ReadOnly = true;
             this.tbAngleTwo.Size = new System.Drawing.Size(63, 21);
             this.tbAngleTwo.TabIndex = 10;
             this.tbAngleTwo.Text = "0";
+            this.tbAngleTwo.Visible = false;
             this.tbAngleTwo.DoubleClick += new System.EventHandler(this.tbAngleTwo_DoubleClick);
             this.tbAngleTwo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbAngleTwo_KeyPress);
             // 
             // tbAngleOne
             // 
-            this.tbAngleOne.Location = new System.Drawing.Point(234, 47);
+            this.tbAngleOne.Location = new System.Drawing.Point(561, 105);
             this.tbAngleOne.Name = "tbAngleOne";
             this.tbAngleOne.ReadOnly = true;
             this.tbAngleOne.Size = new System.Drawing.Size(63, 21);
             this.tbAngleOne.TabIndex = 9;
             this.tbAngleOne.Text = "0";
+            this.tbAngleOne.Visible = false;
             this.tbAngleOne.DoubleClick += new System.EventHandler(this.tbAngleOne_DoubleClick);
             this.tbAngleOne.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbAngleOne_KeyPress);
             // 
             // tbResistance
             // 
-            this.tbResistance.Location = new System.Drawing.Point(71, 47);
+            this.tbResistance.Location = new System.Drawing.Point(899, 138);
             this.tbResistance.Name = "tbResistance";
             this.tbResistance.ReadOnly = true;
             this.tbResistance.Size = new System.Drawing.Size(63, 21);
             this.tbResistance.TabIndex = 8;
             this.tbResistance.Text = "0";
+            this.tbResistance.Visible = false;
             this.tbResistance.TextChanged += new System.EventHandler(this.tbResistance_TextChanged);
             this.tbResistance.DoubleClick += new System.EventHandler(this.tbResistance_DoubleClick);
             this.tbResistance.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbResistance_KeyPress);
@@ -652,21 +753,23 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label9.Location = new System.Drawing.Point(338, 83);
+            this.label9.Location = new System.Drawing.Point(559, 142);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 10);
             this.label9.TabIndex = 7;
             this.label9.Text = "线性允许误差";
+            this.label9.Visible = false;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label8.Location = new System.Drawing.Point(193, 82);
+            this.label8.Location = new System.Drawing.Point(71, 143);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(25, 10);
             this.label8.TabIndex = 6;
             this.label8.Text = "斜率";
+            this.label8.Visible = false;
             // 
             // label7
             // 
@@ -682,7 +785,7 @@
             // 
             this.旋转角度.AutoSize = true;
             this.旋转角度.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.旋转角度.Location = new System.Drawing.Point(527, 50);
+            this.旋转角度.Location = new System.Drawing.Point(178, 48);
             this.旋转角度.Name = "旋转角度";
             this.旋转角度.Size = new System.Drawing.Size(45, 10);
             this.旋转角度.TabIndex = 4;
@@ -692,31 +795,34 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(358, 51);
+            this.label5.Location = new System.Drawing.Point(661, 109);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(45, 10);
             this.label5.TabIndex = 3;
             this.label5.Text = "角度上限";
+            this.label5.Visible = false;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.Location = new System.Drawing.Point(173, 50);
+            this.label4.Location = new System.Drawing.Point(500, 108);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 10);
             this.label4.TabIndex = 2;
             this.label4.Text = "角度下限";
+            this.label4.Visible = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label3.Location = new System.Drawing.Point(36, 50);
+            this.label3.Location = new System.Drawing.Point(864, 141);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(25, 10);
             this.label3.TabIndex = 1;
             this.label3.Text = "总阻";
+            this.label3.Visible = false;
             // 
             // menuStrip1
             // 
@@ -733,7 +839,8 @@
             this.其他功能ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.测试数据加载ToolStripMenuItem,
             this.数据处理相对ToolStripMenuItem,
-            this.线性度曲线ToolStripMenuItem});
+            this.线性度曲线ToolStripMenuItem,
+            this.电压值ToolStripMenuItem});
             this.其他功能ToolStripMenuItem.Name = "其他功能ToolStripMenuItem";
             this.其他功能ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
             this.其他功能ToolStripMenuItem.Text = "其他功能";
@@ -741,16 +848,30 @@
             // 测试数据加载ToolStripMenuItem
             // 
             this.测试数据加载ToolStripMenuItem.Name = "测试数据加载ToolStripMenuItem";
-            this.测试数据加载ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.测试数据加载ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.测试数据加载ToolStripMenuItem.Text = "测试数据加载";
             this.测试数据加载ToolStripMenuItem.Click += new System.EventHandler(this.检测ToolStripMenuItem_Click);
             // 
             // 数据处理相对ToolStripMenuItem
             // 
             this.数据处理相对ToolStripMenuItem.Name = "数据处理相对ToolStripMenuItem";
-            this.数据处理相对ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.数据处理相对ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.数据处理相对ToolStripMenuItem.Text = "数据处理(相对)";
             this.数据处理相对ToolStripMenuItem.Click += new System.EventHandler(this.相对ToolStripMenuItem_Click);
+            // 
+            // 线性度曲线ToolStripMenuItem
+            // 
+            this.线性度曲线ToolStripMenuItem.Name = "线性度曲线ToolStripMenuItem";
+            this.线性度曲线ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.线性度曲线ToolStripMenuItem.Text = "线性度曲线";
+            this.线性度曲线ToolStripMenuItem.Click += new System.EventHandler(this.线性度曲线ToolStripMenuItem_Click);
+            // 
+            // 电压值ToolStripMenuItem
+            // 
+            this.电压值ToolStripMenuItem.Name = "电压值ToolStripMenuItem";
+            this.电压值ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.电压值ToolStripMenuItem.Text = "电压值";
+            this.电压值ToolStripMenuItem.Click += new System.EventHandler(this.电压值ToolStripMenuItem_Click);
             // 
             // panel2
             // 
@@ -761,18 +882,20 @@
             this.panel2.Size = new System.Drawing.Size(1067, 436);
             this.panel2.TabIndex = 4;
             // 
-            // 线性度曲线ToolStripMenuItem
+            // progressBar
             // 
-            this.线性度曲线ToolStripMenuItem.Name = "线性度曲线ToolStripMenuItem";
-            this.线性度曲线ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.线性度曲线ToolStripMenuItem.Text = "线性度曲线";
-            this.线性度曲线ToolStripMenuItem.Click += new System.EventHandler(this.线性度曲线ToolStripMenuItem_Click);
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 590);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1067, 23);
+            this.progressBar.TabIndex = 5;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1067, 613);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.MainMenuStrip = this.menuStrip1;
@@ -829,7 +952,7 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label lbStatus;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox tbV;
+        private System.Windows.Forms.TextBox upValue;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.DataGridView dataGridView;
@@ -848,11 +971,6 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label systmStatus;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Angle;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ActualV;
-        private System.Windows.Forms.DataGridViewTextBoxColumn IdealV;
-        private System.Windows.Forms.DataGridViewTextBoxColumn UpperV;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DownV;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox tbIntervalAngle;
         private System.Windows.Forms.Label label26;
@@ -861,6 +979,20 @@
         private System.Windows.Forms.ToolStripMenuItem 数据处理相对ToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem 线性度曲线ToolStripMenuItem;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.TextBox downValue;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Angle;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ActualV;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LineError;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdealV;
+        private System.Windows.Forms.DataGridViewTextBoxColumn UpperV;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DownV;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.TextBox tbAllAngle;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.ToolStripMenuItem 电压值ToolStripMenuItem;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

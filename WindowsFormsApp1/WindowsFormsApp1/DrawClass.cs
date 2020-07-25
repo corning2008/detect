@@ -95,25 +95,33 @@ namespace WindowsFormsApp1
         /// <param name="chart"></param>
         /// <param name="list"></param>
         /// <param name="areaName"></param>
-        public static void DrawLineError(Chart chart,List<TestPoint> list, string areaName)
+        public static void DrawLineError(Chart chart,List<TestPoint> list, string areaName,decimal upError,decimal downError)
         {
             chart.ChartAreas[0].AxisY.Minimum = -50;
             chart.ChartAreas[0].AxisY.Maximum = 50;
             var xSerial = list.Select(item => item.Angle).ToList();
             var ySerial = list.Select(item => item.LineError).ToList();
             var zeroList = new List<decimal>();
+            var upList = new List<decimal>();
+            var downList = new List<decimal>();
             foreach(var item in xSerial)
             {
                 zeroList.Add(0);
+                upList.Add(upError);
+                downList.Add(downError * -1);
             }
             DrawSplineEx(xSerial, ySerial, chart, areaName+"1",Color.Red, SeriesChartType.Spline);
             DrawSplineEx(xSerial, zeroList, chart, areaName+"2", Color.Blue, SeriesChartType.Spline);
+            DrawSplineEx(xSerial, upList, chart, "误差上限",Color.Green,SeriesChartType.Spline);
+            DrawSplineEx(xSerial, downList, chart, "误差下限", Color.Green, SeriesChartType.Spline);
         }
 
 
 
         public static void DrawData(Chart chart, List<TestPoint> list, string areaName)
         {
+            chart.ChartAreas[0].AxisY.Minimum = 0;
+            chart.ChartAreas[0].AxisY.Maximum = 10;
             //画出理论值
             DrawSplineEx(list.Select(item => item.Angle).ToList(), list.Select(item => item.UpperV).ToList(), chart, areaName+"-理论值", Color.Green, SeriesChartType.Spline);
             //画出上限

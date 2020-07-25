@@ -48,7 +48,7 @@ namespace WindowsFormsApp1
                 {
                     //如果修改成功的话,就重新读取这个数值
                     byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,500);
-                    this._sender.Text = ((decimal)((BitConverter.ToInt16(dataList,0))/ (zoomFlag * 1.0f))) + "";
+                    this._sender.Text = ((decimal)((BitConverter.ToUInt16(dataList,0))/ (zoomFlag * 1.0f))) + "";
                 }
                 
             }

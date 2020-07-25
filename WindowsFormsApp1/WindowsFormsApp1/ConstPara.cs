@@ -17,6 +17,8 @@ namespace WindowsFormsApp1
 
     public enum RegisterSetting
     {
+
+        角度=26,
         /// <summary>
         /// 角度上限PLC地址502
         /// </summary>
@@ -41,6 +43,9 @@ namespace WindowsFormsApp1
         /// PLC地址504
         /// </summary>
         斜率=504,
+
+        上行程= 612,
+        下行程 = 613,
         /// <summary>
         /// PLC地址610
         /// </summary>
@@ -57,8 +62,8 @@ namespace WindowsFormsApp1
         /// PLC地址505
         /// </summary>
         线性允许误差=505,
-        电压上限 = 99,
-        电压下限 = 98,
+        电压上限 = 98,
+        电压下限 = 99,
         极限电压=214,
         //读取采集状态  0:等待测试 1:正在测试  2:测试完成  3:测试故障-总阻正超  4:测试故障-总阻负超  5:测试故障-伺服故障  6测试故障-伺服长时间不到位
         测试状态=10,
