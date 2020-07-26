@@ -97,21 +97,28 @@ namespace WindowsFormsApp1
                 var index = 1;
                 while (index < timeOut)
                 {
-                    Thread.Sleep(1);
-                    index++;
+                    Thread.Sleep(100);
+                    index+=100;
                     if (null != _dataRecv && _dataRecv.Length > 0)
                     {
-                        var newBuffer = new byte[_dataRecv.Length];
-                        Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
-                        //接受到应答数据
-                        Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
-
-                        if (newBuffer[0] == 0x06)
+                        try
                         {
-                            return true;
-                        }
+                            var newBuffer = new byte[_dataRecv.Length];
+                            Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
+                            //接受到应答数据
+                            Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
 
-                        return false;
+                            if (newBuffer[0] == 0x06)
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                        finally
+                        {
+                            _dataRecv = null;
+                        }
 
                     }
                 }
@@ -161,7 +168,15 @@ namespace WindowsFormsApp1
                     }
                     Console.WriteLine($"recv data from plc:{sb.ToString()}");
                     //如果接受到数据,就提交给接口处理
-                    _dataRecv = bytes;
+                    if(_dataRecv == null)
+                    {
+                        _dataRecv = bytes;
+                    }
+                    else
+                    {
+                        _dataRecv = _dataRecv.Concat(bytes).ToArray();
+                    }
+                   
                     _dataRecvPort?.DealData(bytes);
                 });
             }
@@ -210,21 +225,28 @@ namespace WindowsFormsApp1
                 var index = 1;
                 while (index < timeOut)
                 {
-                    Thread.Sleep(1);
-                    index++;
+                    Thread.Sleep(100);
+                    index+=100;
                     if (null != _dataRecv && _dataRecv.Length > 0)
                     {
-                        var newBuffer = new byte[_dataRecv.Length];
-                        Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
-                        //接受到应答数据
-                        Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
-
-                        if (newBuffer[0] == 0x06)
+                        try
                         {
-                            return true;
-                        }
+                            var newBuffer = new byte[_dataRecv.Length];
+                            Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
+                            //接受到应答数据
+                            Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
 
-                        return false;
+                            if (newBuffer[0] == 0x06)
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                        finally
+                        {
+                            _dataRecv = null;
+                        }
 
                     }
                 }
@@ -246,9 +268,10 @@ namespace WindowsFormsApp1
 
             var list = new List<decimal>();
             var readNumber = 5;
+          
             for (var i = 0; i < length; i+=5)
             {
-                
+              
                 byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 500);
                 for(var j = 0; j < readNumber; j++)
                 {
@@ -305,27 +328,34 @@ namespace WindowsFormsApp1
                 var index = 1;
                 while (index < timeOut)
                 {
-                    Thread.Sleep(1);
-                    index++;
+                    Thread.Sleep(100);
+                    index+=100;
                     if (null != _dataRecv && _dataRecv.Length > 1)
                     {
-                        var newBuffer = new byte[_dataRecv.Length];
-                        Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
-                        //接受到应答数据
-                        Console.WriteLine($"接受到PLC应答数据:{GetHexString(newBuffer)}");
-                        if ((length * 2) + 4 != newBuffer.Length)
+                        try
                         {
-                            throw new Exception("接受到PLC应答数据的长度不对");
-                        }
-                        //对接受到的数据进行解析
-                        //if (!PLCCommandFactory.ValidateData(newBuffer))
-                        //{
-                        //    throw new Exception("接受到的数据校验失败");
-                        //}
+                            var newBuffer = new byte[_dataRecv.Length];
+                            Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
+                            //接受到应答数据
+                            Console.WriteLine($"接受到PLC应答数据:{GetHexString(newBuffer)}");
+                            if ((length * 2) + 4 != newBuffer.Length)
+                            {
+                                throw new Exception("接受到PLC应答数据的长度不对");
+                            }
+                            //对接受到的数据进行解析
+                            //if (!PLCCommandFactory.ValidateData(newBuffer))
+                            //{
+                            //    throw new Exception("接受到的数据校验失败");
+                            //}
 
-                        var datas = new byte[newBuffer.Length - 4];
-                        Array.Copy(newBuffer, 1, datas, 0, datas.Length);
-                        return HexStrToByteArray(Encoding.ASCII.GetString(datas));
+                            var datas = new byte[newBuffer.Length - 4];
+                            Array.Copy(newBuffer, 1, datas, 0, datas.Length);
+                            return HexStrToByteArray(Encoding.ASCII.GetString(datas));
+                        }
+                        finally
+                        {
+                            _dataRecv = null;
+                        }
                     }
                 }
 
@@ -335,7 +365,6 @@ namespace WindowsFormsApp1
         }
 
         private static byte[] HexStrToByteArray(string hexString)
-
         {
             hexString = hexString.Replace(" ", "");
             if ((hexString.Length % 2) != 0)
