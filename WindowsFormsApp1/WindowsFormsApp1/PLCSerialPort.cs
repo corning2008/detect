@@ -75,11 +75,7 @@ namespace WindowsFormsApp1
 
         public bool WriteDatasEx(int address, byte[] bytes, int timeOut)
         {
-            if (!Monitor.TryEnter(_flag))
-            {
-                throw new Exception("串口正在执行命令,请稍后");
-            }
-            lock (_flag)
+            try
             {
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
@@ -98,11 +94,10 @@ namespace WindowsFormsApp1
                 while (index < timeOut)
                 {
                     Thread.Sleep(100);
-                    index+=100;
+                    index += 100;
                     if (null != _dataRecv && _dataRecv.Length > 0)
                     {
-                        try
-                        {
+                       
                             var newBuffer = new byte[_dataRecv.Length];
                             Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
                             //接受到应答数据
@@ -114,17 +109,18 @@ namespace WindowsFormsApp1
                             }
 
                             return false;
-                        }
-                        finally
-                        {
-                            _dataRecv = null;
-                        }
+                       
 
                     }
                 }
 
                 throw new Exception("执行命令超时");
             }
+            finally
+            {
+                _dataRecv = null;
+            }
+           
         }
 
 
@@ -175,6 +171,8 @@ namespace WindowsFormsApp1
                     else
                     {
                         _dataRecv = _dataRecv.Concat(bytes).ToArray();
+                        Console.Write($"拼接后数据:");
+                        CommandFactory.PrintBytes(_dataRecv);
                     }
                    
                     _dataRecvPort?.DealData(bytes);
@@ -197,19 +195,13 @@ namespace WindowsFormsApp1
             _port?.Close();
         }
 
-        /// <summary>
-        /// 用于进程间同步
-        /// </summary>
-        private readonly object _flag = new object();
+        
 
         public bool WriteDatas(byte[] command, int timeOut)
         {
-            if (!Monitor.TryEnter(_flag))
+            try
             {
-                throw new Exception("串口正在执行命令,请稍后");
-            }
-            lock (_flag)
-            {
+
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
                 {
@@ -226,33 +218,33 @@ namespace WindowsFormsApp1
                 while (index < timeOut)
                 {
                     Thread.Sleep(100);
-                    index+=100;
+                    index += 100;
                     if (null != _dataRecv && _dataRecv.Length > 0)
                     {
-                        try
-                        {
-                            var newBuffer = new byte[_dataRecv.Length];
-                            Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
-                            //接受到应答数据
-                            Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
 
-                            if (newBuffer[0] == 0x06)
-                            {
-                                return true;
-                            }
+                        var newBuffer = new byte[_dataRecv.Length];
+                        Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
+                        //接受到应答数据
+                        Console.WriteLine($"接受到PLC应答数据 0x06--true 0x15---false :{GetHexString(newBuffer)}");
 
-                            return false;
-                        }
-                        finally
+                        if (newBuffer[0] == 0x06)
                         {
-                            _dataRecv = null;
+                            return true;
                         }
+
+                        return false;
+
 
                     }
                 }
 
                 throw new Exception("执行命令超时");
             }
+            finally
+            {
+                _dataRecv = null;
+            }
+           
         }
 
         /// 读取测试的电压
@@ -267,12 +259,11 @@ namespace WindowsFormsApp1
             }
 
             var list = new List<decimal>();
-            var readNumber = 5;
+            var readNumber = 10;
           
-            for (var i = 0; i < length; i+=5)
+            for (var i = 0; i < length; i+=readNumber)
             {
-              
-                byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 500);
+                byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 1000);
                 for(var j = 0; j < readNumber; j++)
                 {
                     if ((i + j) >= length)
@@ -310,7 +301,7 @@ namespace WindowsFormsApp1
             //{
             //    throw new Exception("串口正在执行命令,请稍后");
             //}
-            lock (_flag)
+            try
             {
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
@@ -332,15 +323,17 @@ namespace WindowsFormsApp1
                     index+=100;
                     if (null != _dataRecv && _dataRecv.Length > 1)
                     {
-                        try
-                        {
+                        
+                            Console.WriteLine("接受到数据长度:" + _dataRecv.Length);
                             var newBuffer = new byte[_dataRecv.Length];
                             Array.Copy(_dataRecv, 0, newBuffer, 0, _dataRecv.Length);
                             //接受到应答数据
                             Console.WriteLine($"接受到PLC应答数据:{GetHexString(newBuffer)}");
                             if ((length * 2) + 4 != newBuffer.Length)
                             {
-                                throw new Exception("接受到PLC应答数据的长度不对");
+                                Thread.Sleep(100);
+                                Console.WriteLine("接受数据长度不对，继续等待");
+                                continue;
                             }
                             //对接受到的数据进行解析
                             //if (!PLCCommandFactory.ValidateData(newBuffer))
@@ -351,15 +344,15 @@ namespace WindowsFormsApp1
                             var datas = new byte[newBuffer.Length - 4];
                             Array.Copy(newBuffer, 1, datas, 0, datas.Length);
                             return HexStrToByteArray(Encoding.ASCII.GetString(datas));
-                        }
-                        finally
-                        {
-                            _dataRecv = null;
-                        }
+                       
                     }
                 }
 
-                throw new Exception("执行命令超时");
+                throw new Exception($"等待时长{timeOut}超时，执行命令超时");
+            }
+            finally
+            {
+                _dataRecv = null;
             }
 
         }

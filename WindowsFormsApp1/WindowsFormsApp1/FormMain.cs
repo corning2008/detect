@@ -235,18 +235,11 @@ namespace WindowsFormsApp1
         //plc的串口
         PLCSerialPort _plcSerialPort = null;
 
-
-      
-        /// <summary>
-        /// 开始检测程序的工作
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnConfirm_Click(object sender, EventArgs e)
+        private void ReadTestData()
         {
             this.progressBar.Value = 0;
             //MessageBox.Show("正在采集数据，请稍后。。。");
-            if(false == hasInit)
+            if (false == hasInit)
             {
                 MessageBox.Show("请先读取参数");
                 return;
@@ -272,26 +265,26 @@ namespace WindowsFormsApp1
             {
                 throw new Exception("打开串口失败");
             }
-     
+
             Task.Factory.StartNew(() =>
             {
                 try
                 {
 
-                    
+
                     //开启检测的工
                     this.Invoke(new Action(() =>
                     {
                         this.cmbSerialPort.Enabled = false;
                         this.btnConfirm.Enabled = false;
                     }));
-                 
+
                     //在开始测试之前需要发送测试命令
                     SetValue((ushort)RegisterSetting.测试命令, 1, _plcSerialPort);
                     Thread.Sleep(200);
                     //开始读取,读取采集的状态, 如果采集到数据就把数据呈现出来
                     SetSystemStatus("等待测试");
-                    
+
                     try
                     {
                         //开始检测之前首先要清空数据
@@ -348,9 +341,27 @@ namespace WindowsFormsApp1
                 {
                     this.btnConfirm.Enabled = true;
                 }
-
             });
-          
+        }
+      
+        /// <summary>
+        /// 开始检测程序的工作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                ReadTestData();
+            }catch(Exception ex)
+            {
+                if(MessageBox.Show("读取数据超时，是否重新读取数据?","提示",MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    btnConfirm_Click(null, null);
+                }
+            }
 
 
         }
@@ -495,6 +506,10 @@ namespace WindowsFormsApp1
         private void GetRunParameter()
         {
             this._allAngle = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.角度, 2, 500), 0) / 100m;
+            this.Invoke(new Action(() =>
+            {
+                this.tbAllAngle.Text = _allAngle + "";
+            }));
             this._upError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大正向允许误差, 2, 500), 0) / 100m;
             Console.WriteLine("上限误差：" + _upError);
             this._downError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大负向允许误差, 2, 500), 0) / 100m;

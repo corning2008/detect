@@ -107,6 +107,11 @@ namespace dsnt
 
         public static void PrintBytes(byte[] dataList)
         {
+            if(null == dataList || dataList.Count() == 0)
+            {
+                
+                return;
+            }
             var sb = new StringBuilder();
             foreach(var item in dataList)
             {
