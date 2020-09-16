@@ -77,8 +77,14 @@ namespace WindowsFormsApp1
                     ChartType = chartType,
                     Color = color
                 };
-              
+                var yMax = GetMaxValue(listY);
+                if(yMax > chart.ChartAreas[0].AxisY.Maximum && yMax < chart.ChartAreas[0].AxisY.Maximum)
+                {
+                    chart.ChartAreas[0].AxisY.Maximum = yMax + 10;
+                    chart.ChartAreas[0].AxisY.Minimum = -yMax - 10;
+                }
                 serial.Points.DataBindXY(listX,listY);
+                
                 chart.Series.Add(serial);
                 chart.DataBind();
             }
@@ -86,6 +92,17 @@ namespace WindowsFormsApp1
             {
                 MessageBox.Show(exc.ToString());
             }
+        }
+
+        private static double GetMaxValue(List<decimal> listY)
+        {
+            var max1 = listY.Max();
+            var min1 = listY.Min();
+            if(max1 > Math.Abs(min1))
+            {
+                return (double)max1;
+            }
+            return -1 * (double)min1;
         }
         #endregion
 
@@ -97,10 +114,12 @@ namespace WindowsFormsApp1
         /// <param name="areaName"></param>
         public static void DrawLineError(Chart chart,List<TestPoint> list, string areaName,decimal upError,decimal downError)
         {
-            chart.ChartAreas[0].AxisY.Minimum = -50;
-            chart.ChartAreas[0].AxisY.Maximum = 50;
+         
             var xSerial = list.Select(item => item.Angle).ToList();
             var ySerial = list.Select(item => item.LineError).ToList();
+            var yMax = ySerial.Max() > Math.Abs(ySerial.Min()) ? ySerial.Max() : Math.Abs(ySerial.Min());
+            chart.ChartAreas[0].AxisY.Minimum = (-1 * ((double)yMax + 10));
+            chart.ChartAreas[0].AxisY.Maximum = (double)yMax + 10;
             var zeroList = new List<decimal>();
             var upList = new List<decimal>();
             var downList = new List<decimal>();
@@ -120,8 +139,8 @@ namespace WindowsFormsApp1
 
         public static void DrawData(Chart chart, List<TestPoint> list, string areaName)
         {
-            chart.ChartAreas[0].AxisY.Minimum = 0;
-            chart.ChartAreas[0].AxisY.Maximum = 10;
+            //chart.ChartAreas[0].AxisY.Minimum = 0;
+            //chart.ChartAreas[0].AxisY.Maximum = 10;
             //画出理论值
             DrawSplineEx(list.Select(item => item.Angle).ToList(), list.Select(item => item.UpperV).ToList(), chart, areaName+"-理论值", Color.Green, SeriesChartType.Spline);
             //画出上限

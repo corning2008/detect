@@ -21,14 +21,16 @@ namespace WindowsFormsApp1
         private GodSerialPort _port = null;
         private string _portName;
         private IDataRecvPort _dataRecvPort;
+        private readonly int _rate;
+
         //接受到的数据
         private byte[] _dataRecv;
 
-        public PLCSerialPort(string portName, IDataRecvPort dataRecvPort)
+        public PLCSerialPort(string portName,int rate, IDataRecvPort dataRecvPort)
         {
             this._portName = portName;
             this._dataRecvPort = dataRecvPort;
-
+            this._rate = rate;
         }
 
 
@@ -43,7 +45,7 @@ namespace WindowsFormsApp1
         {
             //获取设置的命令
             var command = PLCCommandFactory.SetBitCommand(address, value != 1);
-            return WriteDatas(command, 2000);
+            return WriteDatas(command, 3000);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace WindowsFormsApp1
         /// <returns></returns>
         public byte GetD10Status()
         {
-            var bytes = ReadDataFromPLC(10, 1, 500);
+            var bytes = ReadDataFromPLC(10, 1, 3000);
             return bytes[0];
         }
 
@@ -63,7 +65,7 @@ namespace WindowsFormsApp1
         /// <returns></returns>
         public byte[] GetByteStatus(int address, int length)
         {
-            var bytes = ReadDataFromPLC(address, length, 500);
+            var bytes = ReadDataFromPLC(address, length, 3000);
             return bytes;
         }
 
@@ -77,6 +79,10 @@ namespace WindowsFormsApp1
         {
             try
             {
+                if(timeOut < 3000)
+                {
+                    timeOut = 3000;
+                }
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
                 {
@@ -154,7 +160,7 @@ namespace WindowsFormsApp1
         {
             if (null == _port)
             {
-                _port = new GodSerialPort(this._portName, 19200, Parity.Even, 7, StopBits.One, Handshake.None);
+                _port = new GodSerialPort(this._portName, this._rate, Parity.Even, 7, StopBits.One, Handshake.None);
                 _port.UseDataReceived(true, (sp, bytes) =>
                 {
                     StringBuilder sb = new StringBuilder();
@@ -201,7 +207,10 @@ namespace WindowsFormsApp1
         {
             try
             {
-
+                if(timeOut < 3000)
+                {
+                    timeOut = 3000;
+                }
                 _dataRecv = null;
                 if (null != _port && _port.IsOpen)
                 {
@@ -263,7 +272,7 @@ namespace WindowsFormsApp1
           
             for (var i = 0; i < length; i+=readNumber)
             {
-                byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 1000);
+                byte[] datas = ReadDataFromPLC(100 + i, 2*readNumber, 3000);
                 for(var j = 0; j < readNumber; j++)
                 {
                     if ((i + j) >= length)
@@ -297,6 +306,10 @@ namespace WindowsFormsApp1
 
         public byte[] ReadDataFromPLC(int address, int length, int timeOut)
         {
+            if(timeOut < 3000)
+            {
+                timeOut = 3000;
+            }
             //if (!Monitor.TryEnter(_flag))
             //{
             //    throw new Exception("串口正在执行命令,请稍后");

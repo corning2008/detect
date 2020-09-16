@@ -44,10 +44,10 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //电阻
-                if (modbus.WriteDatasEx(this._address, BitConverter.GetBytes(valueSet), 500))
+                if (modbus.WriteDatasEx(this._address, BitConverter.GetBytes(valueSet), 3000))
                 {
                     //如果修改成功的话,就重新读取这个数值
-                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,500);
+                    byte[] dataList = modbus.ReadDataFromPLC(this._address, 2,3000);
                     this._sender.Text = ((decimal)((BitConverter.ToUInt16(dataList,0))/ (zoomFlag * 1.0f))) + "";
                 }
                 

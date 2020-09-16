@@ -201,6 +201,9 @@ namespace WindowsFormsApp1
             //获取所有的串口
             var serialPortList = GetSerialPortList();
             this.cmbSerialPort.DataSource = serialPortList;
+            //波特率
+            var rateList = GetRateList();
+            this.comboBoxRate.DataSource = rateList;
             //获取配置的参数
             var portName = AppConfig.GetValue("com");
             if (!string.IsNullOrEmpty(portName))
@@ -219,6 +222,14 @@ namespace WindowsFormsApp1
 
         }
 
+
+        public List<int> GetRateList()
+        {
+            var list = new List<int>();
+            list.Add(19200);
+            list.Add(9600);
+            return list;
+        }
      
 
         private List<String> GetSerialPortList()
@@ -247,6 +258,7 @@ namespace WindowsFormsApp1
             //开始检测之前首先要清空数据
             ClearData();
             var portName = cmbSerialPort.Text;
+            var rate = int.Parse(comboBoxRate.Text);
             //首先判断端口是否打开
             if (null != _plcSerialPort)
             {
@@ -259,7 +271,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show("请选择串口");
                 return;
             }
-            _plcSerialPort = new PLCSerialPort(portName, null);
+            _plcSerialPort = new PLCSerialPort(portName,rate, null);
             //打开串口
             if (!_plcSerialPort.Open())
             {
@@ -505,22 +517,22 @@ namespace WindowsFormsApp1
         /// </summary>
         private void GetRunParameter()
         {
-            this._allAngle = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.角度, 2, 500), 0) / 100m;
+            this._allAngle = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.角度, 2, ReadTimeOut), 0) / 100m;
             this.Invoke(new Action(() =>
             {
                 this.tbAllAngle.Text = _allAngle + "";
             }));
-            this._upError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大正向允许误差, 2, 500), 0) / 100m;
+            this._upError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大正向允许误差, 2, ReadTimeOut), 0) / 100m;
             Console.WriteLine("上限误差：" + _upError);
-            this._downError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大负向允许误差, 2, 500), 0) / 100m;
+            this._downError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大负向允许误差, 2, ReadTimeOut), 0) / 100m;
             Console.WriteLine("下限误差：" + _downError);
           
 
             //获取电压的上下限
-            var uMax = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压上限, 2, 500), 0);
+            var uMax = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压上限, 2, ReadTimeOut), 0);
             Console.WriteLine($"电压的上限：{uMax}--{uMax / (100m)}");
             this._uMax = (uMax / 100m);
-            var uMin = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压下限, 2, 500), 0);
+            var uMin = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压下限, 2, ReadTimeOut), 0);
             Console.WriteLine($"电压的上限：{uMin}--{uMin / (100m)}");
             this._uMin = (uMin / 100m);
         }
@@ -585,6 +597,8 @@ namespace WindowsFormsApp1
                 e.Text = "角度:" + XValue + "\r\n电压" + YValue;
             }
         }
+
+        private readonly int ReadTimeOut = 3000;
         /// <summary>
         /// 
         /// </summary>
@@ -595,7 +609,7 @@ namespace WindowsFormsApp1
         /// <param name="numberByte">读取的字节数据</param>
         private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1,int numberByte=2)
         {
-            byte[] value = modbus.ReadDataFromPLC(address, numberByte,500);
+            byte[] value = modbus.ReadDataFromPLC(address, numberByte,ReadTimeOut);
             //Int16 dataValue = BitConverter.ToInt16(value, 0);
             //Int16 dataValue = (Int16)value[0];
             GetReadValue(out int dataValue,numberByte,value);
@@ -631,7 +645,7 @@ namespace WindowsFormsApp1
         private void SetValue(ushort address, byte value, PLCSerialPort modbus)
         {
             //  modbus.WriteMultipleRegisters(ConstPara.SlaveId,address,new ushort[]{value});
-            _plcSerialPort.WriteDatasEx(address, new byte[] { value }, 500);
+            _plcSerialPort.WriteDatasEx(address, new byte[] { value }, 3000);
         }
 
         
@@ -915,6 +929,8 @@ namespace WindowsFormsApp1
             try
             {
                 var portName = cmbSerialPort.Text;
+                var rate = int.Parse(comboBoxRate.Text);
+                Console.WriteLine("rate:" + rate);
                 //首先判断端口是否打开
                 if (null != _plcSerialPort)
                 {
@@ -927,7 +943,8 @@ namespace WindowsFormsApp1
                     MessageBox.Show("请选择串口");
                     return;
                 }
-                _plcSerialPort = new PLCSerialPort(portName, null);
+                Console.WriteLine(rate);
+                _plcSerialPort = new PLCSerialPort(portName,rate, null);
                 //打开串口
                 if (!_plcSerialPort.Open())
                 {
@@ -1099,11 +1116,13 @@ namespace WindowsFormsApp1
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     List<TestPoint> dataList = ExcelTool.ExcelToDataList(dialog.FileName, null, true);
+                    _dataSource = dataList;
                     if (dataList.Count > 0)
                     {
                         //加载数据
                         ClearData();
-                        RefreshData(dataList);
+                        //RefreshData(dataList);
+                        RefreshLineErrorData(dataList);
                         MessageBox.Show("加载数据成功");
                     }
                 }
@@ -1166,11 +1185,11 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //计算曲线误差
-                var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
+               // var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
                 //删除数据
                 ClearData();
                 //加载数据
-                RefreshLineErrorData(newDataList);
+                RefreshLineErrorData(_dataSource);
             }
             catch (Exception ex)
             {
@@ -1188,7 +1207,7 @@ namespace WindowsFormsApp1
                 dataGridView.Columns[2].Visible = true;
 
                 //更新曲线图
-                DrawClass.DrawLineError(myChart, _dataSource, "线性曲线", _upError, _downError);
+                DrawClass.DrawLineError(myChart, dataList, "线性曲线", _upError, _downError);
             }));
          
         }

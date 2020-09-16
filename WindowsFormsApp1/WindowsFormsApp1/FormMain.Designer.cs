@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.Angle = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -46,6 +46,7 @@
             this.cmbSerialPort = new System.Windows.Forms.ComboBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.comboBoxRate = new System.Windows.Forms.ComboBox();
             this.label29 = new System.Windows.Forms.Label();
             this.tbAllAngle = new System.Windows.Forms.TextBox();
             this.label30 = new System.Windows.Forms.Label();
@@ -198,21 +199,21 @@
             // 
             // myChart
             // 
-            chartArea2.AxisY.Maximum = 10D;
-            chartArea2.AxisY.Minimum = 0D;
-            chartArea2.CursorX.Interval = 0.01D;
-            chartArea2.Name = "ChartArea1";
-            this.myChart.ChartAreas.Add(chartArea2);
+            chartArea1.AxisY.Maximum = 10D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.CursorX.Interval = 0.01D;
+            chartArea1.Name = "ChartArea1";
+            this.myChart.ChartAreas.Add(chartArea1);
             this.myChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.myChart.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.myChart.Legends.Add(legend1);
             this.myChart.Location = new System.Drawing.Point(0, 0);
             this.myChart.Name = "myChart";
             this.myChart.Size = new System.Drawing.Size(629, 436);
             this.myChart.TabIndex = 3;
             this.myChart.Text = "chart1";
-            title2.Name = "Title1";
-            this.myChart.Titles.Add(title2);
+            title1.Name = "Title1";
+            this.myChart.Titles.Add(title1);
             this.myChart.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.myChart_GetToolTipText);
             // 
             // btnConfirm
@@ -230,6 +231,7 @@
             // cmbSerialPort
             // 
             this.cmbSerialPort.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.cmbSerialPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSerialPort.FormattingEnabled = true;
             this.cmbSerialPort.Location = new System.Drawing.Point(825, 47);
             this.cmbSerialPort.Name = "cmbSerialPort";
@@ -238,6 +240,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboBoxRate);
             this.panel1.Controls.Add(this.label29);
             this.panel1.Controls.Add(this.tbAllAngle);
             this.panel1.Controls.Add(this.label30);
@@ -296,6 +299,16 @@
             this.panel1.Size = new System.Drawing.Size(1067, 177);
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // comboBoxRate
+            // 
+            this.comboBoxRate.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboBoxRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRate.FormattingEnabled = true;
+            this.comboBoxRate.Location = new System.Drawing.Point(672, 46);
+            this.comboBoxRate.Name = "comboBoxRate";
+            this.comboBoxRate.Size = new System.Drawing.Size(147, 20);
+            this.comboBoxRate.TabIndex = 53;
             // 
             // label29
             // 
@@ -993,6 +1006,7 @@
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.ToolStripMenuItem 电压值ToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ComboBox comboBoxRate;
     }
 }
 

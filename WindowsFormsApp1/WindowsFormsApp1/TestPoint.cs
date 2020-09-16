@@ -212,6 +212,7 @@ namespace WindowsFormsApp1.model
             table.Columns.Add(new DataColumn("理论值"));
             table.Columns.Add(new DataColumn("上限"));
             table.Columns.Add(new DataColumn("下限"));
+            table.Columns.Add(new DataColumn("线性度误差"));
 
             foreach (var testPoint in dataList)
             {
@@ -221,6 +222,7 @@ namespace WindowsFormsApp1.model
                 row["理论值"] = testPoint.IdealV;
                 row["上限"] = testPoint.UpperV;
                 row["下限"] = testPoint.DownV;
+                row["线性度误差"] = testPoint.LineError;
                 table.Rows.Add(row);
             }
             return table;

@@ -92,6 +92,7 @@ namespace WindowsFormsApp1
                         point.IdealV = decimal.Parse(row.GetCell(2).ToString());
                         point.UpperV = decimal.Parse(row.GetCell(3).ToString());
                         point.DownV = decimal.Parse(row.GetCell(4).ToString());
+                        point.LineError = decimal.Parse(row.GetCell(5).ToString());
                         dataList.Add(point);
                     }
                 }
