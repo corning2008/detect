@@ -477,9 +477,9 @@ namespace WindowsFormsApp1
                 return false;
             }
             //极限电压
-            if (decimal.Parse(upValue.Text) < 0 || decimal.Parse(upValue.Text) >2)
+            if (decimal.Parse(upValue.Text) < 0 || decimal.Parse(upValue.Text) >25)
             {
-                MessageBox.Show("极限电压不能小于0或者极限电压不能大于200");
+                MessageBox.Show("上行程的有效范围0-25");
                 return false;
             }
             //测试点数
