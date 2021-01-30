@@ -31,7 +31,7 @@ namespace WindowsFormsApp1
         public static void SetFunctionId(int value)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings["functionid"].Value = value+"";
+            config.AppSettings.Settings["functionid"].Value = value + "";
             config.Save();
             ConfigurationManager.RefreshSection("appSettings");
         }

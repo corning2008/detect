@@ -9,7 +9,8 @@ using System.Windows.Forms;
 
 namespace dsnt
 {
-    public enum EnumInsertMode{
+    public enum EnumInsertMode
+    {
         文本,
         二维码,
         Code128A,
@@ -45,7 +46,7 @@ namespace dsnt
 
         public override string ToString()
         {
-            return $"X:{X} Y:{Y} Width:{Width} Height:{Height} Data.Length:{Data.Length}"; 
+            return $"X:{X} Y:{Y} Width:{Width} Height:{Height} Data.Length:{Data.Length}";
         }
 
 
@@ -53,14 +54,14 @@ namespace dsnt
 
         public byte[] GetContentData()
         {
-            var header = new byte[]{0x12,0x00};
-            var dataLength = BitConverter.GetBytes((UInt16) Data.Length);
+            var header = new byte[] { 0x12, 0x00 };
+            var dataLength = BitConverter.GetBytes((UInt16)Data.Length);
             var xBytes = BitConverter.GetBytes(X);
             var widthBytes = BitConverter.GetBytes(Width);
             var yBytes = BitConverter.GetBytes(Y);
             var heightBytes = BitConverter.GetBytes(Height);
             //反色2B
-            var fanByte = BitConverter.GetBytes((UInt16) 00);
+            var fanByte = BitConverter.GetBytes((UInt16)00);
             return header.Concat(dataLength).Concat(xBytes).Concat(widthBytes).Concat(yBytes).Concat(heightBytes)
                 .Concat(fanByte).Concat(Data).ToArray();
         }
@@ -68,59 +69,59 @@ namespace dsnt
 
     public class CommandFactory
     {
-       
 
-        
 
-       
 
-      
 
-        
+
+
+
+
+
 
         public void Test1()
         {
-            
+
         }
 
 
-       
+
 
         public void Test2()
         {
-          
+
         }
 
-      
-       
-
-        
 
 
 
-       
 
-        
 
-       
-        
+
+
+
+
+
+
+
+
 
         public static void PrintBytes(byte[] dataList)
         {
-            if(null == dataList || dataList.Count() == 0)
+            if (null == dataList || dataList.Count() == 0)
             {
-                
+
                 return;
             }
             var sb = new StringBuilder();
-            foreach(var item in dataList)
+            foreach (var item in dataList)
             {
                 sb.Append($"{item:X2} ");
             }
             Console.WriteLine(sb.ToString());
         }
 
-       
+
         /// <summary>
         /// 获取下载的位置信息
         /// </summary>
@@ -129,7 +130,7 @@ namespace dsnt
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        private static byte[] GetLocationBytes(ushort left, ushort top,ushort width,ushort height)
+        private static byte[] GetLocationBytes(ushort left, ushort top, ushort width, ushort height)
         {
             //X起点
             var xBegin = BitConverter.GetBytes(left);
@@ -144,7 +145,7 @@ namespace dsnt
             return xBegin.Concat(xWidth).Concat(yBegin).Concat(yHeight).Concat(fan).ToArray();
         }
 
-       
+
         /// <summary>
         /// 根据内容获取消息的头部，如果插入的是文本，头部就是0x74，0x00
         /// </summary>
@@ -153,20 +154,20 @@ namespace dsnt
         private static byte[] GetContentHeader(byte functionId)
         {
             //插入消息文本
-            if(functionId == 0x0b)
+            if (functionId == 0x0b)
             {
                 return new byte[] { 0x74, 0x00 };
             }
             return new byte[] { 0x00, 0x00 };
         }
 
-       
+
 
         public byte[] GetMyTest()
         {
             var header = new byte[] { 0x7a };
 
-            var list = new byte[] { 0x42};
+            var list = new byte[] { 0x42 };
             return list;
         }
 
@@ -189,7 +190,7 @@ namespace dsnt
                 return false;
             }
             //获取数据的长度(这儿先不做校验，因为比较混乱)
-            var dataLength = BitConverter.ToUInt16(data.Skip(1).Take(2).ToArray(),0);
+            var dataLength = BitConverter.ToUInt16(data.Skip(1).Take(2).ToArray(), 0);
             //if (dataLength != data.Length - 1)
             //{
             //    return false;
@@ -204,7 +205,7 @@ namespace dsnt
             byte[] list = BitConverter.GetBytes(content);
             foreach (var b in list)
             {
-                Console.WriteLine("{0:X2}",b);
+                Console.WriteLine("{0:X2}", b);
             }
         }
     }

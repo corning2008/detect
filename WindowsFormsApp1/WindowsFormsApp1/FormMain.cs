@@ -21,17 +21,17 @@ namespace WindowsFormsApp1
 {
     public partial class Main : Form
     {
-       
+
         private SerialPort _serialPort = null;
         public delegate void Displaydelegate(byte[] InputBuf);
-     
+
         public Displaydelegate disp_delegate;
 
         public ProgressBar GetProgressBar()
         {
             return this.progressBar;
         }
-       
+
         /// <summary>
         /// 是否已经读取配置的参数
         /// </summary>
@@ -43,7 +43,7 @@ namespace WindowsFormsApp1
 
             InitChart(myChart);
 
-          
+
 
         }
 
@@ -74,7 +74,7 @@ namespace WindowsFormsApp1
             chart.ChartAreas[0].AxisY.ScaleView.SmallScrollMinSize = 10;
         }
 
-       
+
 
         /// <summary>
         /// 是否正在读取状态
@@ -82,7 +82,7 @@ namespace WindowsFormsApp1
         private bool isReadingStatus = false;
 
         private int currentY = 0;
-      
+
 
         private void PrintDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
@@ -95,9 +95,9 @@ namespace WindowsFormsApp1
 
             if (currentY < aheight)
             {
-                Bitmap bp = new Bitmap(awidth,aheight);
-                splitSpan1.DrawToBitmap(bp,new Rectangle(0,0,awidth,aheight));
-                e.Graphics.DrawImage(bp,(pwidht-bp.Width)/2,0,new RectangleF(0,currentY,bp.Width,bp.Height), GraphicsUnit.Pixel);
+                Bitmap bp = new Bitmap(awidth, aheight);
+                splitSpan1.DrawToBitmap(bp, new Rectangle(0, 0, awidth, aheight));
+                e.Graphics.DrawImage(bp, (pwidht - bp.Width) / 2, 0, new RectangleF(0, currentY, bp.Width, bp.Height), GraphicsUnit.Pixel);
                 currentY += pheight;
                 if (aheight - pheight > 0)
                 {
@@ -109,7 +109,7 @@ namespace WindowsFormsApp1
                 e.HasMorePages = false;
             }
 
-           
+
         }
 
         /// <summary>
@@ -119,12 +119,12 @@ namespace WindowsFormsApp1
         private Bitmap GetBitmap()
         {
             var panel = this.panelChart;
-            Bitmap bitmap = new Bitmap(panel.Width,panel.Height);
-            panel.DrawToBitmap(bitmap,new Rectangle(0,0,panel.Width,panel.Height));
+            Bitmap bitmap = new Bitmap(panel.Width, panel.Height);
+            panel.DrawToBitmap(bitmap, new Rectangle(0, 0, panel.Width, panel.Height));
             return bitmap;
         }
 
-       
+
 
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -139,7 +139,7 @@ namespace WindowsFormsApp1
 
                 StreamReader sr = new StreamReader(fileName, Encoding.Default);
 
-               
+
 
                 sr.Close();
             }
@@ -179,8 +179,8 @@ namespace WindowsFormsApp1
                     _plcSerialPort.Close();
                     _plcSerialPort = null;
                 }
-              
-               
+
+
             }
             catch (Exception ex)
             {
@@ -190,11 +190,11 @@ namespace WindowsFormsApp1
 
         private void Main_Shown(object sender, EventArgs e)
         {
-           
-          
+
+
         }
 
-      
+
 
         private void Main_Load(object sender, EventArgs e)
         {
@@ -208,9 +208,9 @@ namespace WindowsFormsApp1
             var portName = AppConfig.GetValue("com");
             if (!string.IsNullOrEmpty(portName))
             {
-               for(var i = 0; i < serialPortList.Count; i++)
+                for (var i = 0; i < serialPortList.Count; i++)
                 {
-                    if(serialPortList[i] == portName)
+                    if (serialPortList[i] == portName)
                     {
                         cmbSerialPort.SelectedIndex = i;
                     }
@@ -218,7 +218,7 @@ namespace WindowsFormsApp1
             }
 
 
-          
+
 
         }
 
@@ -230,7 +230,7 @@ namespace WindowsFormsApp1
             list.Add(9600);
             return list;
         }
-     
+
 
         private List<String> GetSerialPortList()
         {
@@ -271,7 +271,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show("请选择串口");
                 return;
             }
-            _plcSerialPort = new PLCSerialPort(portName,rate, null);
+            _plcSerialPort = new PLCSerialPort(portName, rate, null);
             //打开串口
             if (!_plcSerialPort.Open())
             {
@@ -355,7 +355,7 @@ namespace WindowsFormsApp1
                 }
             });
         }
-      
+
         /// <summary>
         /// 开始检测程序的工作
         /// </summary>
@@ -367,9 +367,10 @@ namespace WindowsFormsApp1
             try
             {
                 ReadTestData();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                if(MessageBox.Show("读取数据超时，是否重新读取数据?","提示",MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (MessageBox.Show("读取数据超时，是否重新读取数据?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     btnConfirm_Click(null, null);
                 }
@@ -379,32 +380,40 @@ namespace WindowsFormsApp1
         }
 
 
-        private void ShowTestResult(byte value) {
-            if (0 == value) {
+        private void ShowTestResult(byte value)
+        {
+            if (0 == value)
+            {
                 SetSystemStatus("等待测试");
                 return;
             }
-            if (1 == value) {
+            if (1 == value)
+            {
                 SetSystemStatus("正在测试");
                 return;
             }
-            if (2 == value){
+            if (2 == value)
+            {
                 SetSystemStatus("测试完成");
                 return;
             }
-            if (3 == value) {
+            if (3 == value)
+            {
                 SetSystemStatus("总阻正超");
                 return;
             }
-            if (4 == value){
+            if (4 == value)
+            {
                 SetSystemStatus("总阻负超");
                 return;
             }
-            if (5 == value) {
+            if (5 == value)
+            {
                 SetSystemStatus("伺服故障");
                 return;
             }
-            if (6 == value) {
+            if (6 == value)
+            {
                 SetSystemStatus("伺服长时间不到位");
                 return;
             }
@@ -413,7 +422,8 @@ namespace WindowsFormsApp1
 
         private void SetSystemStatus(string value)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new Action(() =>
+            {
                 systmStatus.Text = value;
             }));
         }
@@ -421,8 +431,10 @@ namespace WindowsFormsApp1
         private void ClearData()
         {
             //清空数据源数据
-            this.Invoke(new Action(() => {
-                this.dataGridView.DataSource = new List<TestPoint>(); }));
+            this.Invoke(new Action(() =>
+            {
+                this.dataGridView.DataSource = new List<TestPoint>();
+            }));
             //清空图标数据
             this.Invoke(new Action(() =>
             {
@@ -438,18 +450,18 @@ namespace WindowsFormsApp1
                 return;
             }
             //
-            DrawChart(this.myChart,int.Parse(tbNumber.Text),0,this._allAngle,decimal.Parse(tbOffset.Text));
+            DrawChart(this.myChart, int.Parse(tbNumber.Text), 0, this._allAngle, decimal.Parse(tbOffset.Text));
 
             this.Invoke(new Action(() =>
             {
                 //获取functionid
                 var functionId = AppSettingTool.GetFunctionId();
-                if(0 == functionId)
+                if (0 == functionId)
                 {
                     //加载线性曲线
 
                 }
-                if(1 == functionId)
+                if (1 == functionId)
                 {
                     //加载电压曲线
                     ClearData();
@@ -468,7 +480,8 @@ namespace WindowsFormsApp1
                 MessageBox.Show("测试的点数不能为空");
                 return false;
             }
-            if (number > 3072) {
+            if (number > 3072)
+            {
                 MessageBox.Show("测试的点数不能大于3072");
                 return false;
             }
@@ -491,7 +504,7 @@ namespace WindowsFormsApp1
                 return false;
             }
             //极限电压
-            if (decimal.Parse(upValue.Text) < 0 || decimal.Parse(upValue.Text) >25)
+            if (decimal.Parse(upValue.Text) < 0 || decimal.Parse(upValue.Text) > 25)
             {
                 MessageBox.Show("上行程的有效范围0-25");
                 return false;
@@ -511,9 +524,9 @@ namespace WindowsFormsApp1
         }
 
 
-       
 
-      
+
+
 
         private IModbusMaster GetModbusMaster(SerialPort port)
         {
@@ -525,7 +538,7 @@ namespace WindowsFormsApp1
             return master;
         }
 
-       
+
         /// <summary>
         /// 读取运行参数
         /// </summary>
@@ -540,7 +553,7 @@ namespace WindowsFormsApp1
             Console.WriteLine("上限误差：" + _upError);
             this._downError = BitConverter.ToUInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.总阻最大负向允许误差, 2, ReadTimeOut), 0) / 100m;
             Console.WriteLine("下限误差：" + _downError);
-          
+
 
             //获取电压的上下限
             var uMax = BitConverter.ToInt16(_plcSerialPort.ReadDataFromPLC((int)RegisterSetting.电压上限, 2, ReadTimeOut), 0);
@@ -550,41 +563,41 @@ namespace WindowsFormsApp1
             Console.WriteLine($"电压的上限：{uMin}--{uMin / (100m)}");
             this._uMin = (uMin / 100m);
         }
-      
+
         private void GetInitValue(PLCSerialPort moduleBus)
         {
             //角度
             InitValue((ushort)RegisterSetting.角度, this.tbAllAngle, _plcSerialPort, 100);
-           
-             //点数
-            InitValue((ushort) RegisterSetting.测试点数, this.tbNumber, _plcSerialPort);
+
+            //点数
+            InitValue((ushort)RegisterSetting.测试点数, this.tbNumber, _plcSerialPort);
             //电阻
-            InitValue((ushort) RegisterSetting.总阻设定, this.tbResistance, _plcSerialPort, 100);
+            InitValue((ushort)RegisterSetting.总阻设定, this.tbResistance, _plcSerialPort, 100);
             //角度1
-            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleOne, _plcSerialPort,10);
+            InitValue((ushort)RegisterSetting.角度下限, this.tbAngleOne, _plcSerialPort, 10);
             //角度2
-            InitValue((ushort) RegisterSetting.角度下限, this.tbAngleTwo, _plcSerialPort,10);
+            InitValue((ushort)RegisterSetting.角度下限, this.tbAngleTwo, _plcSerialPort, 10);
             //旋转速度
-            InitValue((ushort) RegisterSetting.旋转速度, this.tbAngleTransfer, _plcSerialPort, 10);
+            InitValue((ushort)RegisterSetting.旋转速度, this.tbAngleTransfer, _plcSerialPort, 10);
             //斜率
-            InitValue((ushort) RegisterSetting.斜率, this.tbSlope, _plcSerialPort, 100);
+            InitValue((ushort)RegisterSetting.斜率, this.tbSlope, _plcSerialPort, 100);
             //最大允许误差
-            InitValue((ushort) RegisterSetting.线性允许误差, this.tbOffset, _plcSerialPort, 100);
+            InitValue((ushort)RegisterSetting.线性允许误差, this.tbOffset, _plcSerialPort, 100);
             //极限电压
             //InitValue((ushort)RegisterSetting.极限电压,this.tbV, _plcSerialPort, 100);
             //测试角度差
-            InitValue((ushort)RegisterSetting.零位偏差值,this.offsetAngle, _plcSerialPort);
+            InitValue((ushort)RegisterSetting.零位偏差值, this.offsetAngle, _plcSerialPort);
             //正向误差
             InitValue((ushort)RegisterSetting.总阻最大正向允许误差, this.forwardError, _plcSerialPort, 100);
-          
+
             //负向误差
             InitValue((ushort)RegisterSetting.总阻最大负向允许误差, this.backwardError, _plcSerialPort, 100);
 
-          
+
             //零阻误差
             InitValue((ushort)RegisterSetting.零阻最大允许误差, this.zeroError, _plcSerialPort);
             //测量间隔
-            InitValue((ushort)RegisterSetting.测量间隔,this.tbIntervalAngle, _plcSerialPort);
+            InitValue((ushort)RegisterSetting.测量间隔, this.tbIntervalAngle, _plcSerialPort);
 
             //上行程
             InitValue((ushort)RegisterSetting.上行程, this.upValue, _plcSerialPort, 100);
@@ -593,8 +606,8 @@ namespace WindowsFormsApp1
             //下行程
             InitValue((ushort)RegisterSetting.下行程, this.downValue, _plcSerialPort, 100);
             this._downValue = 10 * (1 - decimal.Parse(downValue.Text));
-          
-            
+
+
         }
 
         private void myChart_GetToolTipText(object sender, ToolTipEventArgs e)
@@ -621,28 +634,28 @@ namespace WindowsFormsApp1
         /// <param name="modbus"></param>
         /// <param name="zoomFlag"></param>
         /// <param name="numberByte">读取的字节数据</param>
-        private void InitValue(int address, TextBox textBox,PLCSerialPort modbus,int zoomFlag=1,int numberByte=2)
+        private void InitValue(int address, TextBox textBox, PLCSerialPort modbus, int zoomFlag = 1, int numberByte = 2)
         {
-            byte[] value = modbus.ReadDataFromPLC(address, numberByte,ReadTimeOut);
+            byte[] value = modbus.ReadDataFromPLC(address, numberByte, ReadTimeOut);
             //Int16 dataValue = BitConverter.ToInt16(value, 0);
             //Int16 dataValue = (Int16)value[0];
-            GetReadValue(out int dataValue,numberByte,value);
+            GetReadValue(out int dataValue, numberByte, value);
             this.Invoke(new Action(() =>
             {
                 textBox.Text = ((decimal)(dataValue / (zoomFlag * 1.0f))) + "";
             }));
-           
+
             Console.WriteLine($"读取的数据:{dataValue} 转化后的数据：{textBox.Text}");
         }
 
-        private void GetReadValue(out int dataValue, int numberByte,byte[] bytes)
+        private void GetReadValue(out int dataValue, int numberByte, byte[] bytes)
         {
-           if(numberByte == 1)
+            if (numberByte == 1)
             {
                 dataValue = (int)bytes[0];
                 return;
             }
-           if(numberByte == 2)
+            if (numberByte == 2)
             {
                 dataValue = BitConverter.ToUInt16(bytes, 0);
                 return;
@@ -662,12 +675,12 @@ namespace WindowsFormsApp1
             _plcSerialPort.WriteDatasEx(address, new byte[] { value }, 3000);
         }
 
-        
+
 
 
         private SerialPort GetPort()
         {
-            
+
             var port = new SerialPort(this.cmbSerialPort.Text);
             //打开端口开始读取数据
             port.BaudRate = 19200;
@@ -679,7 +692,7 @@ namespace WindowsFormsApp1
 
         private void tbNumber_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(300,1,e,this.tbNumber);
+            initTbRange(300, 1, e, this.tbNumber);
         }
 
 
@@ -699,44 +712,44 @@ namespace WindowsFormsApp1
             }
         }
 
-       
+
 
         private void tbResistance_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(5000,1,e,this.tbResistance);
+            initTbRange(5000, 1, e, this.tbResistance);
         }
 
         private void tbAngleOne_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(0,-160,e,this.tbAngleOne);
+            initTbRange(0, -160, e, this.tbAngleOne);
         }
 
         private void tbAngleTwo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(160,1,e,this.tbAngleTwo);
+            initTbRange(160, 1, e, this.tbAngleTwo);
         }
 
         private void tbAngleTransfer_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(1000,5,e,this.tbAngleTransfer);
+            initTbRange(1000, 5, e, this.tbAngleTransfer);
         }
 
         private void tbSlope_KeyPress(object sender, KeyPressEventArgs e)
         {
-            initTbRange(25,10,e,this.tbSlope);
+            initTbRange(25, 10, e, this.tbSlope);
         }
 
-     
 
-       
+
+
 
         private void tbResistance_DoubleClick(object sender, EventArgs e)
         {
             try
             {
                 FormSetting form = new FormSetting();
-                form.SetValue(((TextBox) sender).Text,
-                    new SettingResistance(_plcSerialPort, (ushort) RegisterSetting.总阻设定, (TextBox) sender),100);
+                form.SetValue(((TextBox)sender).Text,
+                    new SettingResistance(_plcSerialPort, (ushort)RegisterSetting.总阻设定, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -762,7 +775,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(_plcSerialPort, (ushort)RegisterSetting.角度下限, (TextBox)sender),10);
+                    new SettingResistance(_plcSerialPort, (ushort)RegisterSetting.角度下限, (TextBox)sender), 10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -777,7 +790,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.角度上限, (TextBox)sender),10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.角度上限, (TextBox)sender), 10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -792,7 +805,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.旋转速度, (TextBox)sender),10);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.旋转速度, (TextBox)sender), 10);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -822,7 +835,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.斜率, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.斜率, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -837,7 +850,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.上行程, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.上行程, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -852,7 +865,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.线性允许误差, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.线性允许误差, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -869,21 +882,21 @@ namespace WindowsFormsApp1
         {
             var resultList = new List<decimal>();
             var length = int.Parse(this.tbNumber.Text);
-            
-            return _plcSerialPort.GetTestVList(length,this);
+
+            return _plcSerialPort.GetTestVList(length, this);
         }
 
-        private void DrawChart(Chart chart, int number,decimal angleOne,decimal angleTwo,decimal offSetLine)
+        private void DrawChart(Chart chart, int number, decimal angleOne, decimal angleTwo, decimal offSetLine)
         {
             var vList = GetTestDataList();
-           
 
-            var  list = TestPoint.GetTestPointList(vList, angleOne, 1*angleTwo,offSetLine,_uMax,_uMin,_upError,_downError);
+
+            var list = TestPoint.GetTestPointList(vList, angleOne, 1 * angleTwo, offSetLine, _uMax, _uMin, _upError, _downError);
             this._dataSource = list;
             //查找误差最大的数据
             TestPoint.FindMaxErrorData(list);
             //刷新数据
-           // RefreshData(list);
+            // RefreshData(list);
 
             //计算曲线误差
             var newDataList = TestPoint.ComputeLineErrorValue(_dataSource, _uMax, _uMin);
@@ -892,11 +905,12 @@ namespace WindowsFormsApp1
             //加载数据
             RefreshLineErrorData(newDataList);
 
-            this.Invoke(new Action(() => {
+            this.Invoke(new Action(() =>
+            {
                 //导出数据
                 ExcelTool.TableToExcel(TestPoint.ConvertToDataTable(list), list, GetFileName(), GetBitmap());
             }));
-          
+
         }
 
 
@@ -917,7 +931,7 @@ namespace WindowsFormsApp1
             //_dataSource.Clear();
             //_dataSource.AddRange(dataList);
             dataGridView.DataSource = dataList;
-           
+
             //更新曲线图
             DrawClass.DrawData(myChart, dataList, "数据1");
         }
@@ -930,7 +944,7 @@ namespace WindowsFormsApp1
             {
                 Directory.CreateDirectory(outDirectory);
             }
-            return System.AppDomain.CurrentDomain.BaseDirectory+"output/" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".xls";
+            return System.AppDomain.CurrentDomain.BaseDirectory + "output/" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".xls";
         }
 
         private int GetNumberToRead()
@@ -958,7 +972,7 @@ namespace WindowsFormsApp1
                     return;
                 }
                 Console.WriteLine(rate);
-                _plcSerialPort = new PLCSerialPort(portName,rate, null);
+                _plcSerialPort = new PLCSerialPort(portName, rate, null);
                 //打开串口
                 if (!_plcSerialPort.Open())
                 {
@@ -993,13 +1007,13 @@ namespace WindowsFormsApp1
                 return;
             }
             TestPoint.FindMaxErrorData(dataList);
-            if (e.RowIndex < this.dataGridView.Rows.Count )
+            if (e.RowIndex < this.dataGridView.Rows.Count)
             {
                 DataGridViewRow dgrSingle = this.dataGridView.Rows[e.RowIndex];
                 try
                 {
                     var testPoint = dataList[e.RowIndex];
-                    if (testPoint.LineError > _upError || testPoint.LineError < -1*_downError)
+                    if (testPoint.LineError > _upError || testPoint.LineError < -1 * _downError)
                     {
                         dgrSingle.DefaultCellStyle.ForeColor = Color.Red;
                     }
@@ -1022,7 +1036,7 @@ namespace WindowsFormsApp1
         {
             try
             {
-               
+
                 //获取初始化的数据
                 GetInitValue(_plcSerialPort);
                 //已经从设备中读取参数
@@ -1038,10 +1052,10 @@ namespace WindowsFormsApp1
 
         private void 参数读取ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-          
+
             try
             {
-               
+
                 //获取初始化的数据
                 GetInitValue(_plcSerialPort);
             }
@@ -1055,8 +1069,9 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void SetRegisterValue(ushort address, ushort value) {
-            
+        private void SetRegisterValue(ushort address, ushort value)
+        {
+
         }
 
 
@@ -1069,7 +1084,8 @@ namespace WindowsFormsApp1
                     new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.零位偏差值, (TextBox)sender));
                 form.ShowDialog();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
         }
@@ -1080,7 +1096,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大正向允许误差, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -1096,7 +1112,7 @@ namespace WindowsFormsApp1
             {
                 FormSetting form = new FormSetting();
                 form.SetValue(((TextBox)sender).Text,
-                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender),100);
+                    new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.总阻最大负向允许误差, (TextBox)sender), 100);
                 form.ShowDialog();
             }
             catch (Exception ex)
@@ -1141,9 +1157,10 @@ namespace WindowsFormsApp1
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
-            }      
+            }
         }
 
         private void 相对ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1163,7 +1180,8 @@ namespace WindowsFormsApp1
                 //加载数据
                 RefreshData(dataList);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
         }
@@ -1201,7 +1219,7 @@ namespace WindowsFormsApp1
                     return;
                 }
                 //计算曲线误差
-               // var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
+                // var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
                 //删除数据
                 ClearData();
                 //加载数据
@@ -1225,7 +1243,7 @@ namespace WindowsFormsApp1
                 //更新曲线图
                 DrawClass.DrawLineError(myChart, dataList, "线性曲线", _upError, _downError);
             }));
-         
+
         }
 
         private void downValue_DoubleClick(object sender, EventArgs e)
@@ -1245,7 +1263,7 @@ namespace WindowsFormsApp1
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-           
+
         }
 
         private void tbAllAngle_DoubleClick(object sender, EventArgs e)
@@ -1256,7 +1274,8 @@ namespace WindowsFormsApp1
                 form.SetValue(((TextBox)sender).Text,
                     new SettingResistance(this._plcSerialPort, (ushort)RegisterSetting.角度, (TextBox)sender), 100);
                 form.ShowDialog();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
