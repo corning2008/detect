@@ -442,6 +442,20 @@ namespace WindowsFormsApp1
 
             this.Invoke(new Action(() =>
             {
+                //获取functionid
+                var functionId = AppSettingTool.GetFunctionId();
+                if(0 == functionId)
+                {
+                    //加载线性曲线
+
+                }
+                if(1 == functionId)
+                {
+                    //加载电压曲线
+                    ClearData();
+                    //刷新数据
+                    RefreshData(_dataSource);
+                }
                 MessageBox.Show("采集完成");
             }));
         }
@@ -1178,6 +1192,8 @@ namespace WindowsFormsApp1
         {
             try
             {
+                //修改FunctionId
+                AppSettingTool.SetFunctionId(0);
                 //查询数据是否存在
                 if (this._dataSource.Count == 0)
                 {
@@ -1250,9 +1266,17 @@ namespace WindowsFormsApp1
         {
             try
             {
+                //修改FunctionId
+                AppSettingTool.SetFunctionId(1);
+                //查询数据是否存在
+                if (this._dataSource.Count == 0)
+                {
+                    MessageBox.Show("请获取采集数据,再进行操作");
+                    return;
+                }
                 ClearData();
                 //刷新数据
-                 RefreshData(_dataSource);
+                RefreshData(_dataSource);
             }
             catch (Exception ex)
             {

@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="AppSettingTool.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="CommandFactory.cs" />
     <Compile Include="ConstPara.cs" />
