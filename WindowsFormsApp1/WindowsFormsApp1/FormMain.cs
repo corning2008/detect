@@ -256,7 +256,7 @@ namespace WindowsFormsApp1
                 return;
             }
             //开始检测之前首先要清空数据
-            ClearData();
+            ClearDrawData();
             var portName = cmbSerialPort.Text;
             var rate = int.Parse(comboBoxRate.Text);
             //首先判断端口是否打开
@@ -282,8 +282,6 @@ namespace WindowsFormsApp1
             {
                 try
                 {
-
-
                     //开启检测的工
                     this.Invoke(new Action(() =>
                     {
@@ -300,7 +298,7 @@ namespace WindowsFormsApp1
                     try
                     {
                         //开始检测之前首先要清空数据
-                        ClearData();
+                        ClearDrawData();
 
                         this.Invoke(new Action(() => { btnConfirm.Enabled = false; }));
                         this.isReadingStatus = true;
@@ -322,6 +320,7 @@ namespace WindowsFormsApp1
                             {
                                 //获取运行的参数，开始计算
                                 GetRunParameter();
+                                //开始检测
                                 BeginWork();
                                 break;
                             }
@@ -366,6 +365,7 @@ namespace WindowsFormsApp1
 
             try
             {
+                //开始读取数据
                 ReadTestData();
             }
             catch (Exception ex)
@@ -428,7 +428,7 @@ namespace WindowsFormsApp1
             }));
         }
 
-        private void ClearData()
+        private void ClearDrawData()
         {
             //清空数据源数据
             this.Invoke(new Action(() =>
@@ -449,8 +449,8 @@ namespace WindowsFormsApp1
             {
                 return;
             }
-            //
-            DrawChart(this.myChart, int.Parse(tbNumber.Text), 0, this._allAngle, decimal.Parse(tbOffset.Text));
+            //对采集的数据进行分析处理
+            AnalyzeData(this.myChart, int.Parse(tbNumber.Text), 0, this._allAngle, decimal.Parse(tbOffset.Text));
 
             this.Invoke(new Action(() =>
             {
@@ -459,14 +459,23 @@ namespace WindowsFormsApp1
                 if (0 == functionId)
                 {
                     //加载线性曲线
-
+                    //计算曲线误差
+                    var newDataList = TestPoint.ComputeLineErrorValue(_dataSource, _uMax, _uMin);
+                    //删除数据
+                    ClearDrawData();
+                    //加载数据
+                    RefreshLineErrorData(newDataList);
+                    //打印报表数据
+                    ExportData(_dataSource);
                 }
                 if (1 == functionId)
                 {
                     //加载电压曲线
-                    ClearData();
+                    ClearDrawData();
                     //刷新数据
-                    RefreshData(_dataSource);
+                    RefreshVData(_dataSource);
+                    //打印报表
+                    ExportData(_dataSource);
                 }
                 MessageBox.Show("采集完成");
             }));
@@ -886,31 +895,36 @@ namespace WindowsFormsApp1
             return _plcSerialPort.GetTestVList(length, this);
         }
 
-        private void DrawChart(Chart chart, int number, decimal angleOne, decimal angleTwo, decimal offSetLine)
+        /// <summary>
+        /// 对采集的数据进行分析处理
+        /// </summary>
+        /// <param name="chart"></param>
+        /// <param name="number"></param>
+        /// <param name="angleOne"></param>
+        /// <param name="angleTwo"></param>
+        /// <param name="offSetLine"></param>
+        private void AnalyzeData(Chart chart, int number, decimal angleOne, decimal angleTwo, decimal offSetLine)
         {
+            //读取到测试的结果
             var vList = GetTestDataList();
-
-
             var list = TestPoint.GetTestPointList(vList, angleOne, 1 * angleTwo, offSetLine, _uMax, _uMin, _upError, _downError);
+
             this._dataSource = list;
             //查找误差最大的数据
             TestPoint.FindMaxErrorData(list);
-            //刷新数据
-            // RefreshData(list);
+           
+          
 
-            //计算曲线误差
-            var newDataList = TestPoint.ComputeLineErrorValue(_dataSource, _uMax, _uMin);
-            //删除数据
-            ClearData();
-            //加载数据
-            RefreshLineErrorData(newDataList);
+        }
 
+
+        private void ExportData(List<TestPoint> list)
+        {
             this.Invoke(new Action(() =>
             {
                 //导出数据
                 ExcelTool.TableToExcel(TestPoint.ConvertToDataTable(list), list, GetFileName(), GetBitmap());
             }));
-
         }
 
 
@@ -926,14 +940,14 @@ namespace WindowsFormsApp1
         //角度的范围
         private decimal _allAngle;
 
-        private void RefreshData(List<TestPoint> dataList)
+        private void RefreshVData(List<TestPoint> dataList)
         {
             //_dataSource.Clear();
             //_dataSource.AddRange(dataList);
             dataGridView.DataSource = dataList;
 
             //更新曲线图
-            DrawClass.DrawData(myChart, dataList, "数据1");
+            DrawClass.DrawVData(myChart, dataList, "数据1");
         }
 
         private string GetFileName()
@@ -1150,7 +1164,7 @@ namespace WindowsFormsApp1
                     if (dataList.Count > 0)
                     {
                         //加载数据
-                        ClearData();
+                        ClearDrawData();
                         //RefreshData(dataList);
                         RefreshLineErrorData(dataList);
                         MessageBox.Show("加载数据成功");
@@ -1176,9 +1190,9 @@ namespace WindowsFormsApp1
 
                 List<TestPoint> dataList = TestPoint.GetRelativePoints(_dataSource);
                 //删除数据
-                ClearData();
+                ClearDrawData();
                 //加载数据
-                RefreshData(dataList);
+                RefreshVData(dataList);
             }
             catch (Exception ex)
             {
@@ -1221,7 +1235,7 @@ namespace WindowsFormsApp1
                 //计算曲线误差
                 // var newDataList = TestPoint.ComputeLineErrorValue(_dataSource,_uMax,_uMin);
                 //删除数据
-                ClearData();
+                ClearDrawData();
                 //加载数据
                 RefreshLineErrorData(_dataSource);
             }
@@ -1293,9 +1307,9 @@ namespace WindowsFormsApp1
                     MessageBox.Show("请获取采集数据,再进行操作");
                     return;
                 }
-                ClearData();
+                ClearDrawData();
                 //刷新数据
-                RefreshData(_dataSource);
+                RefreshVData(_dataSource);
             }
             catch (Exception ex)
             {

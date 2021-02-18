@@ -137,7 +137,7 @@ namespace WindowsFormsApp1
 
 
 
-        public static void DrawData(Chart chart, List<TestPoint> list, string areaName)
+        public static void DrawVData(Chart chart, List<TestPoint> list, string areaName)
         {
             //chart.ChartAreas[0].AxisY.Minimum = 0;
             //chart.ChartAreas[0].AxisY.Maximum = 10;

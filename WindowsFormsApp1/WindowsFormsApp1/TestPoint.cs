@@ -172,8 +172,11 @@ namespace WindowsFormsApp1.model
                     //序号
                     Index = dataIndex++
                 };
+                //理想电压
                 point.IdealV = Math.Round(vMin + slopeV1 * point.Index, 2);
+                //上限电压
                 point.UpperV = GetValue(vMin, slopeV1, upError / 100m, point.Index);
+                //下线电压
                 point.DownV = GetValue(vMin, slopeV1, -1*(downError / 100m), point.Index);
                
                 list.Add(point);
